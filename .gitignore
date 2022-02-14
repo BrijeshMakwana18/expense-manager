@@ -3,6 +3,7 @@
 .DS_Store
 
 # Xcode
+client/ios/Pods
 #
 build/
 *.pbxuser
