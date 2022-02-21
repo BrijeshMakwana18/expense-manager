@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "558822496847",
+    "project_id": "coin-sheet-95ac8",
+    "storage_bucket": "coin-sheet-95ac8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558822496847:android:9d2610f6c6fb7e75ef283a",
+        "android_client_info": {
+          "package_name": "com.coinsheet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "558822496847-jfj8mqd9jt6rugm50tg5r2p2idlsvbrr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcpd0_yVLVgiAknWpuuvfZzZgNGPwKmbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "558822496847-jfj8mqd9jt6rugm50tg5r2p2idlsvbrr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "558822496847-62lilv4nrn8293fo6dg3prdhs0b1n3on.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.ExpenseManager"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
