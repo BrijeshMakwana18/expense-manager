@@ -18,7 +18,7 @@ const colors = {
   //TextInput background color
   textInputBackgroundColor: '#212225',
   //Placeholder color
-  placeholderColor: 'rgba(66,76,89,0.5)',
+  placeholderColor: 'rgba(66,76,89,1)',
   //Active button background color
   activeButtonBackgroundColor: '#5A64EA',
   //Inactive button background color
