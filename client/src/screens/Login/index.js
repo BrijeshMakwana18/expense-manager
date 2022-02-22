@@ -18,7 +18,11 @@ import {
 import {Button} from '../../components';
 import {images, colors, fonts, perfectSize, strings} from '../../theme';
 import {styles} from './styles';
-export default function Login(props) {
+import {handleLogin} from './actions';
+import {handleSignup} from '../Signup/actions';
+import {connect} from 'react-redux';
+
+function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -89,13 +93,14 @@ export default function Login(props) {
   };
 
   const handleLoginPress = async (email, password) => {
-    if (email.length == 0 || password.length == 0) {
-      setError('Invalid credentials. Please enter email and password');
-      showError();
-      return;
-    }
+    console.log(props.state);
+    // if (email.length == 0 || password.length == 0) {
+    //   setError('Invalid credentials. Please enter email and password');
+    //   showError();
+    //   return;
+    // }
   };
-
+  const handleForgotPassword = () => {};
   const showError = () => {
     setIsPressable(false);
     Animated.timing(errorModalTop, {
@@ -164,12 +169,13 @@ export default function Login(props) {
           </View>
         </TouchableWithoutFeedback>
         <Text
+          onPress={() => handleForgotPassword()}
           style={{
             textAlign: 'right',
             top: perfectSize(20),
             fontSize: perfectSize(15),
             color: colors.primaryAppColor,
-            fontFamily: fonts.avenirHeavy,
+            fontFamily: fonts.quicksandRegular,
             fontWeight: '600',
             letterSpacing: perfectSize(0.5),
           }}>
@@ -225,3 +231,14 @@ export default function Login(props) {
     </>
   );
 }
+const mapStateToProps = state => {
+  const {LoginReducer: LoginReducer} = state;
+  return {state: state};
+};
+
+const mapDispatchToProps = {
+  handleLogin: handleLogin,
+  handleSignup: handleSignup,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
