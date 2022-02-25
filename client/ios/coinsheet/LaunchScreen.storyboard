@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,20 +16,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="madloops" translatesAutoresizingMaskIntoConstraints="NO" id="Ozb-fb-tFS">
-                                <rect key="frame" x="0.0" y="680" width="390" height="80"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coinsheet" translatesAutoresizingMaskIntoConstraints="NO" id="HFx-aE-pAJ">
-                                <rect key="frame" x="0.0" y="94" width="390" height="192"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coinsheet" translatesAutoresizingMaskIntoConstraints="NO" id="V5r-iq-8db">
+                                <rect key="frame" x="63" y="299" width="265" height="246"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.21568627450980393" green="0.22352941176470587" blue="0.24705882352941178" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="HFx-aE-pAJ" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="50" id="ghu-7C-T9l"/>
-                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="HFx-aE-pAJ" secondAttribute="trailing" id="k8a-Ql-cdM"/>
-                            <constraint firstItem="HFx-aE-pAJ" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="uLt-L7-vV4"/>
+                            <constraint firstItem="V5r-iq-8db" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" constant="63" id="NxN-2k-1C1"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="bottom" secondItem="V5r-iq-8db" secondAttribute="bottom" constant="265" id="OKX-Mq-kw6"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="V5r-iq-8db" secondAttribute="trailing" constant="62" id="Wzq-OR-xP5"/>
+                            <constraint firstItem="V5r-iq-8db" firstAttribute="top" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="255" id="cls-yd-FCu"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -39,7 +36,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="coinsheet" width="192" height="192"/>
-        <image name="madloops" width="480" height="80"/>
+        <image name="coinsheet" width="2000" height="2000"/>
     </resources>
 </document>
