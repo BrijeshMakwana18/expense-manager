@@ -19,10 +19,14 @@ import {
 import {Button} from '../../components';
 import {images, colors, fonts, perfectSize, strings} from '../../theme';
 import {styles} from './styles';
-
-export default function Signup(props) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+import {connect} from 'react-redux';
+import {handleSignup} from './actions';
+const EMAIL =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+function Signup(props) {
+  const [username, setUsername] = useState('Test');
+  const [email, setEmail] = useState('test@gmail.com');
+  const [password, setPassword] = useState('12345678');
   const [error, setError] = useState('');
 
   const backArrowMarginLeft = useRef(
@@ -83,7 +87,8 @@ export default function Signup(props) {
     ]).start();
   };
 
-  const showError = () => {
+  const showError = error => {
+    setError(error);
     Animated.timing(errorModalTop, {
       toValue: Platform.OS == 'ios' ? perfectSize(50) : perfectSize(40),
       duration: 1000,
@@ -99,11 +104,28 @@ export default function Signup(props) {
     }, 2000);
   };
 
-  const handleSignupPress = async (email, password) => {
-    if (email.length == 0 || password.length == 0) {
-      setError('Invalid credentials. Please enter email and password');
-      showError();
+  const handleSignupPress = async (username, email, password) => {
+    if (!EMAIL.test(email)) {
+      showError('Please enter valid email address.');
       return;
+    } else if (password.length < 8) {
+      showError('Please enter 8 characters long password');
+      return;
+    } else {
+      props.handleSignup({
+        username: username,
+        email: email,
+        password: password,
+        onSuccess: response => {
+          if (!response.responseType) {
+            showError(response.error);
+          }
+        },
+        onError: error => {
+          console.log(error);
+          showError('Something went wrong.');
+        },
+      });
     }
   };
   return (
@@ -130,8 +152,19 @@ export default function Signup(props) {
             </Animated.View>
 
             <TextInput
-              contextMenuHidden={true}
-              style={[styles.textInput, {marginTop: '40%'}]}
+              style={[styles.textInput, {marginTop: '20%'}]}
+              placeholderTextColor={colors.placeholderColor}
+              selectionColor={colors.selectionColor}
+              autoCapitalize="none"
+              placeholder="Username"
+              onChangeText={username => setUsername(username)}
+              value={username}
+              returnKeyType="next"
+              onSubmitEditing={() => this.email.focus()}
+              blurOnSubmit={false}
+            />
+            <TextInput
+              style={[styles.textInput, {marginTop: perfectSize(18)}]}
               placeholderTextColor={colors.placeholderColor}
               selectionColor={colors.selectionColor}
               autoCapitalize="none"
@@ -139,8 +172,11 @@ export default function Signup(props) {
               onChangeText={email => setEmail(email)}
               value={email}
               returnKeyType="next"
-              onSubmitEditing={() => this.secondTextInput.focus()}
+              onSubmitEditing={() => this.password.focus()}
               blurOnSubmit={false}
+              ref={input => {
+                this.email = input;
+              }}
             />
             <TextInput
               style={[styles.textInput, {marginTop: perfectSize(18)}]}
@@ -152,7 +188,7 @@ export default function Signup(props) {
               secureTextEntry
               value={password}
               ref={input => {
-                this.secondTextInput = input;
+                this.password = input;
               }}
             />
           </View>
@@ -160,9 +196,9 @@ export default function Signup(props) {
       </View>
       <View style={styles.bottomView}>
         <Button
-          disabled={email && password ? false : true}
+          disabled={email && password && username ? false : true}
           title={strings.signupScreen.buttonTitle}
-          onPress={() => handleSignupPress(email, password)}
+          onPress={() => handleSignupPress(username, email, password)}
         />
         <Text style={styles.bottomText}>
           By logging in, you are agreeing to our{'\n'}
@@ -207,3 +243,14 @@ export default function Signup(props) {
     </>
   );
 }
+
+const mapStateToProps = state => {
+  const {LoginReducer: LoginReducer} = state;
+  return {state: state};
+};
+
+const mapDispatchToProps = {
+  handleSignup: handleSignup,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);

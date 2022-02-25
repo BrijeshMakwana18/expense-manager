@@ -6,7 +6,8 @@ const initialState = {
 
 const LoginReducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.USER_LOGIN:
+    case actionTypes.SET_USER_LOGIN:
+      console.log(action);
       return {...state, userToken: action.payload};
     default:
       return state;

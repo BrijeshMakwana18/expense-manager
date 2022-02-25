@@ -30,7 +30,7 @@ const persistConfig = {
   storage: AsyncStorage,
   // Whitelist (Save Specific Reducers)
   Whitelist: ['LoginReducer'],
-  blacklist: ['SignupReducer'],
+  blacklist: [],
 };
 
 // Middleware: Redux Persist Persisted Reducer

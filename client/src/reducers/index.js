@@ -1,9 +1,9 @@
 import {combineReducers} from 'redux';
 import LoginReducer from '../screens/Login/reducer';
-import SignupReducer from '../screens/Signup/reducer';
+import AppReducer from '../screens/Home/reducer';
 const reducer = combineReducers({
   LoginReducer,
-  SignupReducer,
+  AppReducer
 });
 
 export default reducer;

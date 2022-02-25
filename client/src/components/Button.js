@@ -8,11 +8,12 @@ export default function Button({
   shadow,
   onPress,
   title,
+  loading,
   ...props
 }) {
   return (
     <TouchableOpacity
-      disabled={disabled}
+      disabled={disabled || loading ? true : false}
       style={{
         height: perfectSize(56),
         width: perfectSize(300),
@@ -34,16 +35,20 @@ export default function Button({
         ...props,
       }}
       onPress={onPress}>
-      <Text
-        style={{
-          fontSize: perfectSize(18),
-          fontFamily: fonts.quicksandBold,
-          color: disabled
-            ? colors.inactiveButtonTitleColor
-            : colors.activeButtonTitleColor,
-        }}>
-        {title}
-      </Text>
+      {loading ? (
+        <></>
+      ) : (
+        <Text
+          style={{
+            fontSize: perfectSize(18),
+            fontFamily: fonts.quicksandBold,
+            color: disabled
+              ? colors.inactiveButtonTitleColor
+              : colors.activeButtonTitleColor,
+          }}>
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }

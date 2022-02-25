@@ -22,6 +22,8 @@ import {handleLogin} from './actions';
 import {handleSignup} from '../Signup/actions';
 import {connect} from 'react-redux';
 
+const EMAIL =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 function Login(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,15 +95,25 @@ function Login(props) {
   };
 
   const handleLoginPress = async (email, password) => {
-    console.log(props.state);
-    // if (email.length == 0 || password.length == 0) {
-    //   setError('Invalid credentials. Please enter email and password');
-    //   showError();
-    //   return;
-    // }
+    if (!EMAIL.test(email)) {
+      showError('Please enter valid email');
+      return;
+    }
+    props.handleLogin({
+      email: email,
+      password: password,
+      onSuccess: response => {
+        if (!response.responseType) {
+          showError(response.error);
+        }
+      },
+    });
   };
-  const handleForgotPassword = () => {};
-  const showError = () => {
+  const handleForgotPassword = () => {
+    console.log(props.LoginReducer);
+  };
+  const showError = error => {
+    setError(error);
     setIsPressable(false);
     Animated.timing(errorModalTop, {
       toValue: Platform.OS == 'ios' ? perfectSize(50) : perfectSize(40),
@@ -187,6 +199,7 @@ function Login(props) {
           disabled={email && password ? false : true}
           title={strings.loginScreen.buttonTitle}
           onPress={() => handleLoginPress(email, password)}
+          loading={true}
         />
         <Text style={styles.bottomText}>
           By logging in, you are agreeing to our{'\n'}
@@ -232,8 +245,7 @@ function Login(props) {
   );
 }
 const mapStateToProps = state => {
-  const {LoginReducer: LoginReducer} = state;
-  return {state: state};
+  return {LoginReducer: state.LoginReducer};
 };
 
 const mapDispatchToProps = {
