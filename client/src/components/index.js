@@ -1,3 +1,3 @@
 import Button from './Button';
-
-export {Button};
+import DashboardSkeleton from './Skeletons/DashboardSkeleton';
+export {Button, DashboardSkeleton};
