@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const register = require("./register");
+const login = require("./login");
+const transaction = require("./addTransaction");
+const fetchTransaction = require("./dashboard");
+router.use("/register", register);
+router.use("/login", login);
+router.use("/transaction", transaction);
+router.use("/dashboard", fetchTransaction);
+module.exports = router;
