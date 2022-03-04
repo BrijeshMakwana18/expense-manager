@@ -29,6 +29,18 @@ const colors = {
   inactiveButtonTitleColor: 'rgba(255,255,255,0.5)',
   //Primary shadow color
   primaryShadowColor: '#FFFFFF',
+  //Avtive tab icon color
+  activeTabColor: 'white',
+  //Inavtive tab icon color
+  inactiveTabColor: '#607A92',
+  //Tab bar background color
+  tabBarBackgroundColor: '#222222',
+  //Modal background color accross the app (Calendar picker modal background)
+  modalBackgroundColor: 'rgba(1,1,1,0.7)',
+  creditTransactionBackgroundColor: '#262A34',
+  creditTransactionTintColor: 'rgb(0,128,0)',
+  creditTransactionAmountColor: 'white',
+  debitTransactionAmountColor: 'white',
 };
 
 export default colors;

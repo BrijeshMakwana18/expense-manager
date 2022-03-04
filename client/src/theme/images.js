@@ -11,7 +11,7 @@ export default images = {
   offlineImage: require('../assets/images/offline.png'),
   expense: require('../assets/images/expense.png'),
   food: require('../assets/images/food.png'),
-  cash: require('../assets/images/cash.png'),
+  recharge: require('../assets/images/cash.png'),
   transfer: require('../assets/images/transfer.png'),
   entertainment: require('../assets/images/entertainment.png'),
   fuel: require('../assets/images/fuel.png'),
