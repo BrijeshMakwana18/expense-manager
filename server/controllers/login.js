@@ -1,18 +1,25 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const User = require("../../modal/User");
-const hasher = require("../../utils/Hasher");
+const User = require("../modal/User");
+const hasher = require("../utils/Hasher");
+const EMAIL =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 router.post("/", async (req, res) => {
   const { email, password } = req.body;
+  if (!EMAIL.test(email) || password == "") {
+    res.send({
+      responseType: false,
+      error: "Please enter valid email and password",
+    });
+  }
   //Checking if user does not exists
   const user = await User.findOne({
     email: email,
   });
-  console.log(user, email);
   if (!user) {
     const response = {
       responseType: false,
-      error: "User does not exists.",
+      error: "User does not exists",
     };
     return res.send(response);
   }
@@ -28,7 +35,7 @@ router.post("/", async (req, res) => {
   if (hashedpassword !== user.password) {
     const response = {
       responseType: false,
-      error: "Wrong password.",
+      error: "Wrong password",
     };
     return res.send(response);
   }
@@ -44,7 +51,7 @@ router.post("/", async (req, res) => {
       },
     });
   } else {
-    return res.send("Something went wrong.");
+    return res.send("Something went wrong");
   }
 });
 

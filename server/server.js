@@ -1,19 +1,19 @@
-//Import Express
+//Imports
 const express = require("express");
-const app = express();
-//Import dotenv
 const dotenv = require("dotenv");
-dotenv.config();
-//Import Mongoose
 const mongoose = require("mongoose");
-//Import Routes
-const routesV1 = require("./routes/v1");
+const routesV1 = require("./routes");
+
+const app = express();
+
+dotenv.config();
 
 //MongoDB Connect
 mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true }, () => {
   console.log("Connected to DB");
 });
 const db = mongoose.connection;
+
 //Middlewares
 app.use(express.json());
 app.use("/api/v1", routesV1);

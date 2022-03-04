@@ -1,9 +1,8 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const User = require("../../modal/User");
-const hasher = require("../../utils/Hasher");
+const User = require("../modal/User");
+const hasher = require("../utils/Hasher");
 router.post("/", async (req, res) => {
-  console.log(req);
   const { username, email, password } = req.body;
   //Generate hash
   const hashResult = await hasher(password);
