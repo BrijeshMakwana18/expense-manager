@@ -18,6 +18,10 @@ const db = mongoose.connection;
 app.use(express.json());
 app.use("/api/v1", routesV1);
 
+app.get("*", (req, res) => {
+  res.sendStatus(404).send("Not Found");
+});
+
 app.listen(3000, () => {
   console.log("Server is running");
 });
