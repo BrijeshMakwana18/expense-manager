@@ -1,14 +1,17 @@
 import {actionTypes} from './actionTypes';
 
 const initialState = {
-  userToken: '',
+  user: {},
 };
 
 const LoginReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SET_USER_LOGIN:
       console.log(action);
-      return {...state, userToken: action.payload};
+      return {...state, user: action.payload};
+    case actionTypes.LOGOUT:
+      console.log(action);
+      return {...state, user: {}};
     default:
       return state;
   }
