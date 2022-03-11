@@ -5,12 +5,14 @@ import {request} from '../../../services/services';
 import {actionTypes} from './actionTypes';
 function* addIncome(action) {
   const params = action.payload.income;
-  console.log(params);
+  const token = action.payload.token;
   try {
     const {response} = yield request(
       ADD_TRANSACTION(),
       HTTP_METHODS.POST,
       params,
+      true,
+      token,
     );
     action.payload.onSuccess(response.data);
   } catch (error) {
