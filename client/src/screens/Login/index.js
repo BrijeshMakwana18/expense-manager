@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import {Button} from '../../components';
 import {images, colors, fonts, perfectSize, strings} from '../../theme';
-import {styles} from './styles';
+import styles from './styles';
 import {handleLogin} from './actions';
 import {handleSignup} from '../Signup/actions';
 import {connect} from 'react-redux';
@@ -199,7 +199,7 @@ function Login(props) {
           disabled={email && password ? false : true}
           title={strings.loginScreen.buttonTitle}
           onPress={() => handleLoginPress(email, password)}
-          loading={true}
+          // loading={true}
         />
         <Text style={styles.bottomText}>
           By logging in, you are agreeing to our{'\n'}

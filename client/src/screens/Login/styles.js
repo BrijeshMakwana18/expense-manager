@@ -1,6 +1,7 @@
-import {StyleSheet} from 'react-native';
+/* eslint-disable no-undef */
+import {StyleSheet, Platform} from 'react-native';
 import {perfectSize, colors, fonts} from '../../theme';
-export const styles = StyleSheet.create({
+export default styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: perfectSize(Platform.OS == 'ios' ? 56 : 40),
