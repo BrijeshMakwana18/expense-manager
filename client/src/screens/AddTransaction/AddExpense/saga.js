@@ -5,14 +5,18 @@ import {request} from '../../../services/services';
 import {actionTypes} from './actionTypes';
 function* addExpense(action) {
   const params = action.payload.expense;
+  const token = action.payload.token;
   try {
     const {response} = yield request(
       ADD_TRANSACTION(),
       HTTP_METHODS.POST,
       params,
+      true,
+      token,
     );
     action.payload.onSuccess(response.data);
   } catch (error) {
+    console.log(error);
     action.payload.onError(error.data);
   }
 }
