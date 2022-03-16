@@ -20,6 +20,8 @@ import {images, colors, fonts, perfectSize, strings} from '../../../theme';
 import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddIncome} from './actions';
+import {fetchDashboard} from '../../Home/actions';
+import {handleFetchStat} from '../../Statistics/actions';
 //Months for date picker
 let months = [
   'January',
@@ -438,6 +440,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   handleAddIncome: handleAddIncome,
+  fetchDashboard: fetchDashboard,
+  handleFetchStat: handleFetchStat,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddIncome);

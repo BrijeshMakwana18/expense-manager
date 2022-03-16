@@ -22,10 +22,9 @@ import {images, colors, fonts, perfectSize, strings} from '../../../theme';
 import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddExpense} from './actions';
-// rgb(233,91,146)
-// rgb(255,72,72)
-// rgb(163,112,92)
-// rgb(220,137,136)
+import {fetchDashboard} from '../../Home/actions';
+import {handleFetchStat} from '../../Statistics/actions';
+import {getDisplayDate} from '../../../utils/globalMethods';
 //Categories data
 const data = [
   {
@@ -35,8 +34,8 @@ const data = [
     tintColor: 'rgb(246,78,162)',
   },
   {
-    title: 'CASH',
-    image: images.cash,
+    title: 'RECHARGE',
+    image: images.recharge,
     backgroundColor: 'rgba(255,72,72,0.9)',
     tintColor: 'rgb(255,72,72)',
   },
@@ -765,6 +764,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = {
   handleAddExpense: handleAddExpense,
+  fetchDashboard: fetchDashboard,
+  handleFetchStat: handleFetchStat,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddExpense);
