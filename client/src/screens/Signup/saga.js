@@ -15,11 +15,12 @@ function* userSignup(action) {
     if (response.data.responseType) {
       yield put({
         type: loginActionTypes.SET_USER_LOGIN,
-        payload: response.data.token,
+        payload: response.data.user,
       });
     }
     action.payload?.onSuccess(response.data);
   } catch (error) {
+    console.log('Signup error', error.response);
     action.payload?.onError(error);
   }
 }

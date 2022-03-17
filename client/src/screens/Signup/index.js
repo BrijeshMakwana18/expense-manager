@@ -18,15 +18,15 @@ import {
 } from 'react-native';
 import {Button} from '../../components';
 import {images, colors, fonts, perfectSize, strings} from '../../theme';
-import {styles} from './styles';
+import styles from './styles';
 import {connect} from 'react-redux';
 import {handleSignup} from './actions';
 const EMAIL =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 function Signup(props) {
-  const [username, setUsername] = useState('Test');
-  const [email, setEmail] = useState('test@gmail.com');
-  const [password, setPassword] = useState('12345678');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const backArrowMarginLeft = useRef(

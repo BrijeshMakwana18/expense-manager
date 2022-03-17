@@ -104,7 +104,7 @@ export default function Launch({navigation}) {
               height: perfectSize(71),
               width: slideButton,
               alignSelf: 'flex-start',
-              borderRadius: perfectSize(13),
+              borderRadius: perfectSize(5),
               zIndex: 1,
             }}
           />

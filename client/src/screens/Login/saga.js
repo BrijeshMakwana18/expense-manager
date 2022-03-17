@@ -8,18 +8,19 @@ function* userLogin(action) {
     email: action.payload.email,
     password: action.payload.password,
   };
+  console.log(params);
   try {
     const {response} = yield request(USER_LOGIN(), HTTP_METHODS.POST, params);
     console.log('Success', response);
     if (response.data.responseType) {
       yield put({
         type: actionTypes.SET_USER_LOGIN,
-        payload: response.data.token,
+        payload: response.data.user,
       });
     }
     action.payload.onSuccess(response.data);
   } catch (error) {
-    console.log('Error', error);
+    console.log('Error', error.data);
   }
 }
 export function* userLoginWatcher() {
