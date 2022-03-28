@@ -153,16 +153,19 @@ class AddExpense extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ammount: this.props.route?.params?.item?.amount.toString() || '',
+      amount: this.props.route?.params?.item?.amount.toString() || '',
       // payee: '',
       notes: this.props.route?.params?.item?.notes || '',
       selectedCat:
-        this.props.route?.params?.item?.selectedCat.toUpperCase() || '',
-      displayDate: this.props.route?.params?.item?.displayDate || '',
-      modalDisplayDate: '',
+        this.props.route?.params?.item?.transactionCat.toUpperCase() || '',
+      // displayDate:
+      //   this.props.route?.params?.item?.transactionDate || new Date(),
+      // modalDisplayDate: new Date(),
       datePicker: false,
-      modalDate: this.props.route?.params?.item?.transactionDate || '',
-      selectedExpenseType: '',
+      // modalDate: this.props.route?.params?.item?.transactionDate || new Date(),
+      selectedExpenseType: this.props.route?.params?.item?.expenseType || '',
+      selectedDate:
+        this.props.route?.params?.item?.transactionDate || new Date(),
     };
   }
 
