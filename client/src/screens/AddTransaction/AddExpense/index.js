@@ -195,18 +195,6 @@ class AddExpense extends Component {
       'keyboardDidHide',
       this.keyboardDidHide,
     );
-    if (!this.props.route?.params?.isEdit) {
-      let today = new Date();
-      let date = `${today.getDate()} ${months[
-        today.getMonth()
-      ].toUpperCase()}, ${today.getFullYear()}`;
-
-      this.setState({
-        displayDate: date,
-        modalDisplayDate: date,
-        modalDate: today,
-      });
-    }
   }
 
   componentWillUnmount() {
