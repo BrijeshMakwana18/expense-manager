@@ -174,11 +174,12 @@ class AddExpense extends Component {
   opacity = new Animated.Value(perfectSize(1));
   catMarginTop = new Animated.Value(perfectSize(0));
   notesInputHeight = new Animated.Value(perfectSize(80));
-  ammountInputMarginTop = new Animated.Value(perfectSize(20));
+  amountInputMarginTop = new Animated.Value(perfectSize(20));
   doneButtonRight = new Animated.Value(perfectSize(-100));
   datePickerMarginTop = new Animated.Value(perfectSize(950));
 
   componentDidMount() {
+    DeviceEventEmitter.emit('HideTabBar', true);
     // if (this.props.route.params?.isEdit) {
     //   let index = item =>
     //     item.title.toLowerCase() == this.props.route.params?.item.selectedCat;
