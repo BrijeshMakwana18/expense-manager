@@ -314,42 +314,59 @@ class AddExpense extends Component {
   };
 
   isActive = () => {
-    const {ammount, selectedCat, notes, selectedExpenseType} = this.state;
-    return selectedExpenseType.trim() == '' ||
-      selectedExpenseType.trim() == '' ||
-      ammount.trim() == '' ||
-      notes.trim() == '' ||
-      Object.keys(selectedCat).length == 0
-      ? false
-      : true;
+    const {amount, selectedCat, notes, selectedExpenseType} = this.state;
+    if (this.props.route.params?.isEdit) {
+      const {amount, notes, selectedDate, selectedCat, selectedExpenseType} =
+        this.state;
+      const {item} = this.props?.route?.params;
+      const previousRecord = {
+        userId: this.props.LoginReducer.user.id,
+        type: 'debit',
+        amount: item.amount,
+        transactionDate: item.transactionDate,
+        notes: item.notes,
+        transactionCat: item.transactionCat.toLowerCase(),
+        expenseType: item.expenseType,
+      };
+      let updatedRedord = {
+        userId: this.props.LoginReducer.user.id,
+        type: 'debit',
+        amount: parseFloat(amount),
+        transactionDate: selectedDate,
+        notes: notes,
+        transactionCat: selectedCat.toLowerCase(),
+        expenseType: selectedExpenseType,
+      };
+      if (JSON.stringify(previousRecord) == JSON.stringify(updatedRedord)) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return selectedExpenseType.trim() == '' ||
+        selectedExpenseType.trim() == '' ||
+        amount.trim() == '' ||
+        notes.trim() == '' ||
+        Object.keys(selectedCat).length == 0
+        ? false
+        : true;
+    }
   };
 
   onDateChange = date => {
     let today = new Date(date);
-    let temp = `${today.getDate()} ${months[
-      today.getMonth()
-    ].toUpperCase()}, ${today.getFullYear()}`;
 
     this.setState({
-      modalDisplayDate: temp,
-      modalDate: today,
+      selectedDate: today,
     });
   };
 
   handleDateSubmit = () => {
-    let date = this.state.modalDisplayDate;
-    this.setState({
-      displayDate: date,
-    });
     this.handleDatePicker(false);
   };
 
   handleCancelDate = () => {
     this.handleDatePicker(false);
-    let date = this.state.displayDate;
-    this.setState({
-      modalDisplayDate: date,
-    });
   };
 
   handleDatePicker = type => {
