@@ -15,6 +15,7 @@ import {
   Animated,
   StatusBar,
   FlatList,
+  DeviceEventEmitter,
 } from 'react-native';
 import {Button, ButtonWithImage, PrimaryHeader} from '../../../components';
 import {connect} from 'react-redux';
@@ -225,7 +226,7 @@ class AddExpense extends Component {
         duration: 300,
         useNativeDriver: false,
       }),
-      Animated.timing(this.ammountInputMarginTop, {
+      Animated.timing(this.amountInputMarginTop, {
         toValue: perfectSize(Platform.OS == 'ios' ? 70 : 50),
         duration: 300,
         useNativeDriver: false,
@@ -260,7 +261,7 @@ class AddExpense extends Component {
         duration: 300,
         useNativeDriver: false,
       }),
-      Animated.timing(this.ammountInputMarginTop, {
+      Animated.timing(this.amountInputMarginTop, {
         toValue: perfectSize(20),
         duration: 300,
         useNativeDriver: false,
@@ -376,63 +377,89 @@ class AddExpense extends Component {
   };
 
   handleUpdate = async () => {
-    const {
-      ammount,
-      notes,
-      displayDate,
-      selectedCat,
-      modalDate,
-      selectedExpenseType,
-    } = this.state;
-    const {item} = this.props?.route?.params;
-    const previousRecord = {
-      type: 'debit',
-      amount: item.amount,
-      transactionDate: item.transactionDate,
-      notes: item?.notes,
-      displayDate: item?.displayDate,
-      selectedCat: item.selectedCat?.toLowerCase(),
-    };
+    const {amount, notes, selectedDate, selectedCat, selectedExpenseType} =
+      this.state;
+
     let updatedRedord = {
+      userId: this.props.LoginReducer.user.id,
       type: 'debit',
-      amount: parseFloat(ammount),
-      transactionDate: modalDate,
+      amount: parseFloat(amount),
+      transactionDate: selectedDate,
       notes: notes,
-      displayDate: displayDate,
-      selectedCat: selectedCat.toLowerCase(),
+      transactionCat: selectedCat.toLowerCase(),
+      expenseType: selectedExpenseType,
+      id: this.props.route.params.item._id,
     };
+    this.props.handleAddExpense({
+      expense: updatedRedord,
+      onSuccess: response => {
+        const params = {
+          id: this.props.LoginReducer.user.id,
+          dashboardType: 'all',
+        };
+        console.log('Expense added', response);
+        this.props.fetchDashboard({
+          params,
+        });
+        if (response.responseType) {
+          this.props.navigation.navigate('TransactionSuccess', {
+            isUpdate: true,
+            isFromExpense: true,
+            amount: response.transaction.amount,
+            notes: response.transaction.notes,
+            transactionDate: response.transaction.transactionDate,
+            selectedCat: response.transaction.transactionCat,
+            expenseType: response.transaction.expenseType,
+          });
+        }
+      },
+      onError: error => {
+        console.log('Add expense error', error);
+      },
+    });
   };
 
   handleOnSubmit = async () => {
-    const {
-      ammount,
-      notes,
-      displayDate,
-      selectedCat,
-      modalDate,
-      selectedExpenseType,
-    } = this.state;
+    const {amount, notes, selectedDate, selectedCat, selectedExpenseType} =
+      this.state;
     const expense = {
       userId: this.props.LoginReducer.user.id,
       type: 'debit',
-      amount: parseFloat(ammount),
-      transactionDate: modalDate,
+      amount: parseFloat(amount),
+      transactionDate: selectedDate,
       notes: notes,
       transactionCat: selectedCat.toLowerCase(),
       expenseType: selectedExpenseType,
     };
     this.props.handleAddExpense({
       expense: expense,
+      token: this.props.LoginReducer.user.token,
       onSuccess: response => {
+        const dashboardParams = {
+          id: this.props.LoginReducer.user.id,
+          dashboardType: 'all',
+        };
+        const statisticsParams = {
+          id: this.props.LoginReducer.user.id,
+          statisticsType: 'all',
+        };
         console.log('Expense added', response);
+        this.props.fetchDashboard({
+          params: dashboardParams,
+          token: this.props.LoginReducer.user.token,
+        });
+        this.props.handleFetchStat({
+          params: statisticsParams,
+          token: this.props.LoginReducer.user.token,
+        });
         if (response.responseType) {
           this.props.navigation.navigate('TransactionSuccess', {
             isFromExpense: true,
-            amount: response.ammount,
-            notes: response.notes,
-            transactionDate: response.transactionDate,
-            selectedCat: response.transactionCat,
-            expenseType: response.expenseType,
+            amount: response.transaction.amount,
+            notes: response.transaction.notes,
+            transactionDate: response.transaction.transactionDate,
+            selectedCat: response.transaction.transactionCat,
+            expenseType: response.transaction.expenseType,
           });
         }
       },
