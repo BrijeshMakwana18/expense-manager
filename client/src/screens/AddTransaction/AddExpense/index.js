@@ -472,7 +472,7 @@ class AddExpense extends Component {
     console.log('Add expense render');
     const {
       headerTitle,
-      ammountPlaceholder,
+      amountPlaceholder,
       notesPlaceholder,
       selectCat,
       buttonTitle,
@@ -505,7 +505,12 @@ class AddExpense extends Component {
                 opacity: this.opacity,
               }}>
               <PrimaryHeader
-                onPress={() => this.props.navigation.goBack()}
+                onPress={() => {
+                  if (this.props.route.params?.isEdit) {
+                    DeviceEventEmitter.emit('HideTabBar', false);
+                  }
+                  this.props.navigation.goBack();
+                }}
                 title={
                   this.props?.route?.params?.isEdit
                     ? headerTitleForEdit
