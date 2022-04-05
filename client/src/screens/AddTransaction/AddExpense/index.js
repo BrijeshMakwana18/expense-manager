@@ -524,14 +524,14 @@ class AddExpense extends Component {
               <Text
                 style={styles.dateLabel}
                 onPress={() => this.handleDatePicker(true)}>
-                {this.state.displayDate}
+                {getDisplayDate(this.state.selectedDate)}
               </Text>
             </Animated.View>
             <Animated.View
               style={[
-                styles.ammountInputContainer,
+                styles.amountInputContainer,
                 {
-                  marginTop: this.ammountInputMarginTop,
+                  marginTop: this.amountInputMarginTop,
                 },
               ]}>
               <TextInput
