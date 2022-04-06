@@ -542,15 +542,15 @@ class AddExpense extends Component {
                 ]}
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 selectionColor={colors.primaryAppColor}
-                placeholder={ammountPlaceholder}
+                placeholder={amountPlaceholder}
                 keyboardType="numeric"
-                onChangeText={amount => this.setState({ammount: amount})}
-                value={this.state.ammount}
+                onChangeText={amount => this.setState({amount: amount})}
+                value={this.state.amount}
                 returnKeyType="next"
                 onSubmitEditing={() => this.notesInput.focus()}
                 blurOnSubmit={false}
                 ref={input => {
-                  this.ammountInput = input;
+                  this.amountInput = input;
                 }}
               />
             </Animated.View>
@@ -713,7 +713,6 @@ class AddExpense extends Component {
               }
               position="absolute"
               bottom={perfectSize(30)}
-              active={this.isActive()}
               onPress={() =>
                 this.props?.route?.params?.isEdit
                   ? this.handleUpdate()
@@ -744,7 +743,7 @@ class AddExpense extends Component {
             <View style={styles.datePickerContainer}>
               <View style={styles.datePickerHeaderContainer}>
                 <Text style={styles.datePickerHeaderLabel}>
-                  {this.state.modalDisplayDate}
+                  {getDisplayDate(this.state.selectedDate)}
                 </Text>
               </View>
               <CalendarPicker

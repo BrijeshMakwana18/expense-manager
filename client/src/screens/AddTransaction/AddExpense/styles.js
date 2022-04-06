@@ -57,7 +57,7 @@ export default styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: perfectSize(18),
   },
-  ammountInputContainer: {
+  amountInputContainer: {
     width: '100%',
     height: perfectSize(80),
     alignSelf: 'center',
