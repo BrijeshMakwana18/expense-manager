@@ -74,7 +74,7 @@ class AddIncome extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ammount: '',
+      amount: '',
       notes: '',
       isKeyboard: false,
       displayDate: '',
@@ -90,7 +90,7 @@ class AddIncome extends Component {
   catMarginTop = new Animated.Value(perfectSize(0));
   inputWidth = new Animated.Value(perfectSize(360));
   notesInputHeight = new Animated.Value(perfectSize(0));
-  ammountInputMarginTop = new Animated.Value(perfectSize(20));
+  amountInputMarginTop = new Animated.Value(perfectSize(20));
   doneButtonRight = new Animated.Value(perfectSize(-100));
   datePickerMarginTop = new Animated.Value(perfectSize(950));
 
@@ -146,7 +146,7 @@ class AddIncome extends Component {
         duration: 300,
         useNativeDriver: false,
       }),
-      Animated.timing(this.ammountInputMarginTop, {
+      Animated.timing(this.amountInputMarginTop, {
         toValue: perfectSize(Platform.OS == 'ios' ? 70 : 50),
         duration: 300,
         useNativeDriver: false,
@@ -186,7 +186,7 @@ class AddIncome extends Component {
         duration: 300,
         useNativeDriver: false,
       }),
-      Animated.timing(this.ammountInputMarginTop, {
+      Animated.timing(this.amountInputMarginTop, {
         toValue: perfectSize(20),
         duration: 300,
         useNativeDriver: false,
@@ -200,8 +200,8 @@ class AddIncome extends Component {
   };
 
   isActive = () => {
-    const {ammount} = this.state;
-    return ammount.trim() == '' ? false : true;
+    const {amount} = this.state;
+    return amount.trim() == '' ? false : true;
   };
 
   onDateChange = date => {
@@ -239,23 +239,41 @@ class AddIncome extends Component {
   };
 
   handleOnSubmit = async () => {
-    const {ammount, notes, displayDate, modalDate} = this.state;
+    const {amount, notes, displayDate, modalDate} = this.state;
     const income = {
       userId: this.props.LoginReducer.user.id,
       type: 'credit',
-      amount: parseFloat(ammount),
+      amount: parseFloat(amount),
       transactionDate: modalDate,
       notes: notes,
     };
     this.props.handleAddIncome({
       income: income,
+      token: this.props.LoginReducer.user.token,
       onSuccess: response => {
         console.log('Income added', response);
+        const dashboardParams = {
+          id: this.props.LoginReducer.user.id,
+          dashboardType: 'all',
+        };
+        const statisticsParams = {
+          id: this.props.LoginReducer.user.id,
+          statisticsType: 'all',
+        };
+        console.log('Expense added', response);
+        this.props.fetchDashboard({
+          params: dashboardParams,
+          token: this.props.LoginReducer.user.token,
+        });
+        this.props.handleFetchStat({
+          params: statisticsParams,
+          token: this.props.LoginReducer.user.token,
+        });
         this.props.navigation.navigate('TransactionSuccess', {
-          isFromExpense: false,
-          amount: parseFloat(ammount),
-          notes: notes,
-          displayDate: displayDate,
+          isFromIncome: true,
+          amount: response.transaction.amount,
+          notes: response.transaction.notes,
+          transactionDate: response.transaction.transactionDate,
         });
       },
       onError: error => {
