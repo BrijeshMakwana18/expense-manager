@@ -282,7 +282,7 @@ class AddIncome extends Component {
     });
   };
   render() {
-    const {headerTitle, ammountPlaceholder, notesPlaceholder, buttonTitle} =
+    const {headerTitle, amountPlaceholder, notesPlaceholder, buttonTitle} =
       strings.addIncome;
     return (
       <>
@@ -318,27 +318,25 @@ class AddIncome extends Component {
             </Animated.View>
             <Animated.View
               style={[
-                styles.ammountInputContainer,
+                styles.amountInputContainer,
                 {
                   width: this.inputWidth,
-                  marginTop: this.ammountInputMarginTop,
+                  marginTop: this.amountInputMarginTop,
                 },
               ]}>
               <TextInput
                 style={styles.textInput}
                 placeholderTextColor="rgba(255,255,255,0.3)"
                 selectionColor={colors.primaryAppColor}
-                placeholder={ammountPlaceholder}
+                placeholder={amountPlaceholder}
                 keyboardType="decimal-pad"
-                onChangeText={ammount =>
-                  this.setState({ammount: ammount.trim()})
-                }
-                value={this.state.ammount}
+                onChangeText={amount => this.setState({amount: amount.trim()})}
+                value={this.state.amount}
                 returnKeyType="next"
                 onSubmitEditing={() => this.notesInput.focus()}
                 blurOnSubmit={false}
                 ref={input => {
-                  this.ammountInput = input;
+                  this.amountInput = input;
                 }}
               />
             </Animated.View>
