@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const authenticateToken = require("./authorization");
 const Transaction = require("../modal/Transaction");
+const { response } = require("express");
 router.post("/", authenticateToken, async (req, res) => {
   const { id, dashboardType, customDashboardDate } = req.body;
   let query;
@@ -15,7 +16,16 @@ router.post("/", authenticateToken, async (req, res) => {
       },
     });
   }
-
+  let allCreditsQuery = Transaction.find({
+    userId: id,
+    type: "credit",
+  });
+  let allCredits = 0;
+  allCreditsQuery.exec((err, response) => {
+    if (!err) {
+      allCredits = response.reduce((acc, item) => acc + item.amount, 0);
+    }
+  });
   query.exec((err, response) => {
     if (err) {
       res.send(err);
@@ -143,6 +153,7 @@ router.post("/", authenticateToken, async (req, res) => {
       const dashboardData = {
         responseType: true,
         error: false,
+        allCredits: allCredits,
         totalIncome: totalIncome.toFixed(2),
         totalExpense: (totalExpense - investmentTransactions.total).toFixed(2),
         totalInvestment: investmentTransactions.total.toFixed(2),
