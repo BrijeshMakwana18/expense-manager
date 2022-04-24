@@ -4,22 +4,25 @@ const cheerio = require("cheerio");
 const authorization = require("./authorization");
 // const MF = "https://api.mfapi.in/mf";
 const yahooFinance = "https://finance.yahoo.com/quote/";
-let MFInvestments = [
-  { id: 135781, units: 286.576, avg: 34.89 },
-  { id: 120465, units: 2036.235, avg: 49.1 },
-  { id: 120847, units: 5.52, avg: 250.8213 },
-];
-let stocksInvestments = [
-  { id: "GOLDBEES.NS", units: 450, avg: 44.1 },
-  { id: "IRB.NS", units: 25, avg: 259.55 },
-  { id: "NIFTYBEES.NS", units: 200, avg: 179.96 },
-];
-router.post("/", authorization, async (req, res) => {
-  let stocks = [];
 
+router.post("/", authorization, async (req, res) => {
+  let portfolio = {
+    mutualFunds: [
+      { id: 135781, units: 286.576, avg: 34.89 },
+      { id: 120465, units: 2036.235, avg: 49.1 },
+      { id: 120847, units: 5.52, avg: 250.8213 },
+    ],
+    indianStocks: [
+      { id: "GOLDBEES.NS", units: 450, avg: 44.1 },
+      { id: "IRB.NS", units: 25, avg: 259.55 },
+      { id: "NIFTYBEES.NS", units: 200, avg: 179.96 },
+    ],
+  };
+  let stocks = [];
   //Stocks
-  for (let i = 0; i < stocksInvestments.length; i++) {
-    await axios(yahooFinance + stocksInvestments[i].id).then((response) => {
+  let indianStocks = portfolio.indianStocks;
+  for (let i = 0; i < indianStocks.length; i++) {
+    await axios(yahooFinance + indianStocks[i].id).then((response) => {
       let html = response.data;
       const $ = cheerio.load(html);
       let priceData = $("div > div > div > fin-streamer").html();
@@ -32,8 +35,8 @@ router.post("/", authorization, async (req, res) => {
       let nameData = $("div > div> div > h1").html();
       let lastUpdatedData = $("#quote-market-notice > span").html();
       //Calculation values
-      let units = stocksInvestments[i].units;
-      let investedNav = stocksInvestments[i].avg;
+      let units = indianStocks[i].units;
+      let investedNav = indianStocks[i].avg;
       let currentNav = parseFloat(priceData.replace(/,/g, ""));
       let priceChange = parseFloat(priceChangeData);
       let pricePercentChange = parseFloat(
@@ -55,7 +58,7 @@ router.post("/", authorization, async (req, res) => {
         ).toFixed(2)}%`,
       };
       let tempStocks = {
-        id: stocksInvestments[i].id,
+        id: indianStocks[i].id,
         name: nameData.toString(),
         units: units,
         investedNav: investedNav,
@@ -94,9 +97,10 @@ router.post("/", authorization, async (req, res) => {
 
   let MF = [];
   //MF
-  for (let i = 0; i < MFInvestments.length; i++) {
+  let mutualFunds = portfolio.mutualFunds;
+  for (let i = 0; i < mutualFunds.length; i++) {
     await axios
-      .get(`https://api.mfapi.in/mf/${MFInvestments[i].id}`)
+      .get(`https://api.mfapi.in/mf/${mutualFunds[i].id}`)
       .then((response) => {
         if (response.data.status === "SUCCESS") {
           //Mutual fund data
@@ -104,8 +108,8 @@ router.post("/", authorization, async (req, res) => {
           let data = response.data.data;
 
           //Calculation values
-          let units = MFInvestments[i].units;
-          let investedNav = MFInvestments[i].avg;
+          let units = mutualFunds[i].units;
+          let investedNav = mutualFunds[i].avg;
           let currentNav = parseFloat(data[0].nav);
           let previousNav = data[1].nav;
           let priceChange = (currentNav - previousNav).toFixed(2);

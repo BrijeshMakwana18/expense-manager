@@ -3,31 +3,9 @@ const authenticateToken = require("./authorization");
 const Transaction = require("../modal/Transaction");
 const { response } = require("express");
 router.post("/", authenticateToken, async (req, res) => {
-  const { id, dashboardType, customDashboardDate } = req.body;
-  let query;
-  if (dashboardType == "all") {
-    query = Transaction.find({ userId: id });
-  } else {
-    query = Transaction.find({
-      userId: id,
-      transactionDate: {
-        $gte: customDashboardDate.start,
-        $lte: customDashboardDate.end,
-      },
-    });
-  }
-  let allCreditsQuery = Transaction.find({
-    userId: id,
-    type: "credit",
-  });
-  let allCredits = await allCreditsQuery.exec();
-  allCredits = allCredits.reduce((acc, item) => acc + item.amount, 0);
-  let allInvestmentQuery = Transaction.find({
-    userId: id,
-    expenseType: "investment",
-  });
-  let allInvestment = await allInvestmentQuery.exec();
-  allInvestment = allInvestment.reduce((acc, item) => acc + item.amount, 0);
+  const { id } = req.body;
+  let query = Transaction.find({ userId: id });
+
   query.exec((err, response) => {
     if (err) {
       res.send(err);
@@ -225,8 +203,6 @@ router.post("/", authenticateToken, async (req, res) => {
       const dashboardData = {
         responseType: true,
         error: false,
-        allCredits: allCredits,
-        allInvestment: allInvestment,
         totalIncome: totalIncome.toFixed(2),
         totalExpense: (totalExpense - investmentTransactions.total).toFixed(2),
         totalInvestment: investmentTransactions.total.toFixed(2),
