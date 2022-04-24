@@ -20,12 +20,14 @@ router.post("/", authenticateToken, async (req, res) => {
     userId: id,
     type: "credit",
   });
-  let allCredits = 0;
-  allCreditsQuery.exec((err, response) => {
-    if (!err) {
-      allCredits = response.reduce((acc, item) => acc + item.amount, 0);
-    }
+  let allCredits = await allCreditsQuery.exec();
+  allCredits = allCredits.reduce((acc, item) => acc + item.amount, 0);
+  let allInvestmentQuery = Transaction.find({
+    userId: id,
+    expenseType: "investment",
   });
+  let allInvestment = await allInvestmentQuery.exec();
+  allInvestment = allInvestment.reduce((acc, item) => acc + item.amount, 0);
   query.exec((err, response) => {
     if (err) {
       res.send(err);
@@ -43,6 +45,76 @@ router.post("/", authenticateToken, async (req, res) => {
         (acc, item) => acc + item.amount,
         0
       );
+      //Stats Start
+      const needTransactions = debitTransactions.filter(
+        (item) => item.expenseType == "need"
+      );
+      const needsTotal = needTransactions
+        .reduce((prev, item) => prev + item.amount, 0)
+        .toFixed(2);
+
+      const wantTransactions = debitTransactions.filter(
+        (item) => item.expenseType == "want"
+      );
+      const wantesTotal = wantTransactions
+        .reduce((prev, item) => prev + item.amount, 0)
+        .toFixed(2);
+
+      const investmentStatTransactions = debitTransactions.filter(
+        (item) => item.expenseType == "investment"
+      );
+      const investmentTotal = investmentStatTransactions
+        .reduce((prev, item) => prev + item.amount, 0)
+        .toFixed(2);
+
+      let needStat = {
+        title: "Needs",
+        total: needsTotal,
+        numberOfTransactions: needTransactions.length,
+        percentage: ((100 * needsTotal) / totalIncome).toFixed(2),
+      };
+      let wantStat = {
+        title: "Wants",
+        total: wantesTotal,
+        numberOfTransactions: wantTransactions.length,
+        percentage: ((100 * wantesTotal) / totalIncome).toFixed(2),
+      };
+      let investmentStat = {
+        title: "Investments",
+        total: investmentTotal,
+        numberOfTransactions: investmentStatTransactions.length,
+        percentage: ((100 * investmentTotal) / totalIncome).toFixed(2),
+      };
+      const totalSavings =
+        totalIncome - needsTotal - wantesTotal - investmentTotal;
+      let savingsStat = {
+        title: "Savings",
+        total: totalSavings,
+        numberOfTransactions:
+          response.length -
+          investmentStatTransactions.length -
+          needTransactions.length -
+          wantTransactions.length,
+        percentage: ((100 * totalSavings) / totalIncome).toFixed(2),
+      };
+      let statData = [needStat, wantStat, investmentStat, savingsStat];
+      let stat = {};
+      if (totalIncome == 0) {
+        stat = {
+          responseType: false,
+          error:
+            "Oops! Seems like you have spent more than you have. If not then please select valid dates for custom statistics. This could happen when you have no income as per our records during selected period.",
+        };
+      } else {
+        stat = {
+          responseType: true,
+          error: false,
+          totalIncome: totalIncome,
+          stat: statData,
+        };
+      }
+      //Stats End
+
       let foodTransactions = { cat: "food", total: 0, transactions: [] };
       let rechargeTransactions = {
         cat: "recharge",
@@ -154,6 +226,7 @@ router.post("/", authenticateToken, async (req, res) => {
         responseType: true,
         error: false,
         allCredits: allCredits,
+        allInvestment: allInvestment,
         totalIncome: totalIncome.toFixed(2),
         totalExpense: (totalExpense - investmentTransactions.total).toFixed(2),
         totalInvestment: investmentTransactions.total.toFixed(2),
@@ -169,6 +242,7 @@ router.post("/", authenticateToken, async (req, res) => {
         transactionCategories: transactionCategories.filter(
           (item) => item.total > 0
         ),
+        stat: stat,
       };
       res.send(dashboardData);
     }

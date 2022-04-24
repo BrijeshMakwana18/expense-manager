@@ -4,19 +4,8 @@ const authenticateToken = require("./authorization");
 const path = require("path");
 
 router.post("/", authenticateToken, async (req, res) => {
-  const { id, customStatisticsDate, statisticsType } = req.body;
-  let query;
-  if (statisticsType == "all") {
-    query = Transaction.find({ userId: id });
-  } else {
-    query = Transaction.find({
-      userId: id,
-      transactionDate: {
-        $gte: customStatisticsDate.start,
-        $lte: customStatisticsDate.end,
-      },
-    });
-  }
+  const { id } = req.body;
+  let query = Transaction.find({ userId: id });
   query.exec((err, response) => {
     if (err) {
       res.send(err);
@@ -67,9 +56,8 @@ router.post("/", authenticateToken, async (req, res) => {
         numberOfTransactions: investmentTransactions.length,
         percentage: ((100 * investmentTotal) / totalIncome).toFixed(2),
       };
-      const totalSavings = `${
-        totalIncome - needsTotal - wantesTotal - investmentTotal
-      }`;
+      const totalSavings =
+        totalIncome - needsTotal - wantesTotal - investmentTotal;
       let savingsStat = {
         title: "Savings",
         total: totalSavings,
