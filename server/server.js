@@ -18,7 +18,7 @@ const db = mongoose.connection;
 app.use(express.json());
 app.use("/api/v1", routesV1);
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server is running");
 });
 
