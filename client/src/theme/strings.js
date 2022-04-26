@@ -20,6 +20,7 @@ const strings = {
     myBalanceTitle: 'My balance',
     dashboardIncomeTitle: 'Income',
     dashboardExpenseTitle: 'Expense',
+    dashboardInvestmentTitle: 'Investments',
     topCatHeader: 'Top categories',
     seeAll: 'See all',
     recentTransactionsHeader: 'Recent transactions',
@@ -34,6 +35,7 @@ const strings = {
       'Oh! Looks like you do not have any transaction in current month.',
     customEmptyDashboardTitle:
       'Oh! Looks like you do not have any transaction during selected time period.',
+    summary: 'Spending habits',
   },
   tabBarLabels: {
     home: 'Dashboard',
