@@ -81,6 +81,7 @@ const CircularProgress = ({
   clockwise,
   bgColor,
   startDegrees,
+  marginTop,
 }) => {
   const commonStyles = {
     width: radius * 2,
@@ -151,7 +152,11 @@ const CircularProgress = ({
   }
 
   return (
-    <View style={[styles.container, {width: radius * 2, height: radius * 2}]}>
+    <View
+      style={[
+        styles.container,
+        {width: radius * 2, height: radius * 2, marginTop: marginTop},
+      ]}>
       <View
         style={[
           styles.baselayer,
@@ -233,7 +238,6 @@ CircularProgress.defaultProps = {
  **/
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
