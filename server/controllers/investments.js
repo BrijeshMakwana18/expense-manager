@@ -19,6 +19,70 @@ router.post("/", authorization, async (req, res) => {
   //US
   let usStocks = portfolio.us.stocks;
   let usStocksList = [];
+  // for (let i = 0; i < usStocks.length; i++) {
+  //   await axios(
+  //     `https://financialmodelingprep.com/api/v3/quote/${usStocks[i].id}?apikey=9e9a1295bba2d3a7b54bb49fc82c07ff`
+  //   ).then((response) => {
+  //     let data = response.data[0];
+  //     //Calculation values
+  //     let units = usStocks[i].units;
+  //     let investedNav = usStocks[i].avg;
+  //     let currentNav = data.price;
+  //     let priceChange = data.change;
+  //     let pricePercentChange = data.changesPercentage.toFixed(2);
+  //     let investmentValue = investedNav * units;
+  //     let currentValue = currentNav * units;
+  //     let investmentValueChange = (currentValue - investmentValue).toFixed(2);
+  //     let navChange = {
+  //       price: priceChange,
+  //       percentage: `${pricePercentChange}%`,
+  //     };
+  //     let dailyStockPriceChange = priceChange * units;
+  //     let totalInvestmentChange = {
+  //       price: investmentValueChange,
+  //       percentage: `${(
+  //         (100 * investmentValueChange) /
+  //         investmentValue
+  //       ).toFixed(2)}%`,
+  //     };
+  //     let tempStocks = {
+  //       id: data.name,
+  //       name: data.name.toString(),
+  //       units: units,
+  //       investedNav: investedNav,
+  //       currentNav: currentNav,
+  //       investmentValue: investmentValue,
+  //       currentValue: currentValue,
+  //       hasTimeStamp: true,
+  //       lastUpdated: data.timestamp,
+  //       dailyPriceChange: dailyStockPriceChange,
+  //       navChange: navChange,
+  //       investmentChange: totalInvestmentChange,
+  //     };
+  //     usStocksList.push(tempStocks);
+  //   });
+  // }
+  // let totalUSStocksInvestment = usStocksList.reduce(
+  //   (acc, item) => acc + item.investmentValue,
+  //   0
+  // );
+  // let totalUSStocksValue = usStocksList.reduce(
+  //   (acc, item) => acc + item.currentValue,
+  //   0
+  // );
+  // let totalUSStocksPL = totalUSStocksValue - totalUSStocksInvestment;
+  // let totalUSStocksPLPercentage = (
+  //   (100 * totalUSStocksPL) /
+  //   totalUSStocksInvestment
+  // ).toFixed(2);
+  // let dailyUSStockPriceChange = usStocks.reduce(
+  //   (acc, item) => acc + item.dailyPriceChange,
+  //   0
+  // );
+  // let dailyUSStockPercentageChange = (
+  //   (100 * dailyUSStockPriceChange) /
+  //   totalUSStocksInvestment
+  // ).toFixed(2);
   for (let i = 0; i < usStocks.length; i++) {
     await axios(yahooFinance + usStocks[i].id).then((response) => {
       let html = response.data;
