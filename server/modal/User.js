@@ -28,6 +28,15 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
+  portfolio: {
+    type: Object,
+    required: true,
+    default: {
+      us: [],
+      mutualFunds: [],
+      indianStocks: [],
+    },
+  },
 });
 
 module.exports = mongoose.model("User", userSchema);

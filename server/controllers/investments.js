@@ -20,17 +20,26 @@ router.post("/", authorization, async (req, res) => {
   let usStocks = portfolio.us.stocks;
   let usStocksList = [];
   for (let i = 0; i < usStocks.length; i++) {
-    await axios(
-      `https://financialmodelingprep.com/api/v3/quote/${usStocks[i].id}?apikey=9e9a1295bba2d3a7b54bb49fc82c07ff`
-    ).then((response) => {
-      // console.log(response);
-      let data = response.data[0];
+    await axios(yahooFinance + usStocks[i].id).then((response) => {
+      let html = response.data;
+      const $ = cheerio.load(html);
+      let priceData = $("div > div > div > fin-streamer").html();
+      let priceChangeData = $(
+        "div > div > div > fin-streamer:nth-child(2) > span"
+      ).html();
+      let changePercentageData = $(
+        "div > div > div > fin-streamer:nth-child(3) > span"
+      ).html();
+      let nameData = $("div > div> div > h1").html();
+      let lastUpdatedData = $("#quote-market-notice > span").html();
       //Calculation values
       let units = usStocks[i].units;
       let investedNav = usStocks[i].avg;
-      let currentNav = data.price;
-      let priceChange = data.change;
-      let pricePercentChange = data.changesPercentage.toFixed(2);
+      let currentNav = parseFloat(priceData.replace(/,/g, ""));
+      let priceChange = parseFloat(priceChangeData);
+      let pricePercentChange = parseFloat(
+        changePercentageData.replace(/%|[(]|[)]/g, "")
+      );
       let investmentValue = investedNav * units;
       let currentValue = currentNav * units;
       let investmentValueChange = (currentValue - investmentValue).toFixed(2);
@@ -47,15 +56,14 @@ router.post("/", authorization, async (req, res) => {
         ).toFixed(2)}%`,
       };
       let tempStocks = {
-        id: data.name,
-        name: data.name.toString(),
+        id: usStocks[i].id,
+        name: nameData.toString(),
         units: units,
         investedNav: investedNav,
         currentNav: currentNav,
         investmentValue: investmentValue,
         currentValue: currentValue,
-        hasTimeStamp: true,
-        lastUpdated: data.timestamp,
+        lastUpdated: lastUpdatedData.toString(),
         dailyPriceChange: dailyStockPriceChange,
         navChange: navChange,
         investmentChange: totalInvestmentChange,
@@ -76,7 +84,7 @@ router.post("/", authorization, async (req, res) => {
     (100 * totalUSStocksPL) /
     totalUSStocksInvestment
   ).toFixed(2);
-  let dailyUSStockPriceChange = usStocks.reduce(
+  let dailyUSStockPriceChange = usStocksList.reduce(
     (acc, item) => acc + item.dailyPriceChange,
     0
   );
