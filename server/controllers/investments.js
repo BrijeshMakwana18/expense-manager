@@ -2,24 +2,90 @@ const router = require("express").Router();
 const axios = require("axios").default;
 const cheerio = require("cheerio");
 const authorization = require("./authorization");
-// const MF = "https://api.mfapi.in/mf";
+const User = require("../modal/User");
 const yahooFinance = "https://finance.yahoo.com/quote/";
 
 router.post("/", authorization, async (req, res) => {
-  let portfolio = {
-    mutualFunds: [
-      { id: 135781, units: 286.576, avg: 34.89 },
-      { id: 120465, units: 2036.235, avg: 49.1 },
-      { id: 120847, units: 5.52, avg: 250.8213 },
-    ],
-    indianStocks: [
-      { id: "GOLDBEES.NS", units: 450, avg: 44.1 },
-      { id: "IRB.NS", units: 25, avg: 259.55 },
-      { id: "NIFTYBEES.NS", units: 200, avg: 179.96 },
-    ],
-  };
-  let stocks = [];
+  let { body } = req;
+  const query = User.find({ _id: body.id });
+  let portfolio = {};
+  let userPortfolio = await query.exec();
+  portfolio = await userPortfolio[0].portfolio;
+
+  // let test = await User.findOneAndUpdate(
+  //   { _id: body.id },
+  //   { portfolio: portfolio }
+  // ).exec();
+  //US
+  let usStocks = portfolio.us.stocks;
+  let usStocksList = [];
+  for (let i = 0; i < usStocks.length; i++) {
+    await axios(
+      `https://financialmodelingprep.com/api/v3/quote/${usStocks[i].id}?apikey=9e9a1295bba2d3a7b54bb49fc82c07ff`
+    ).then((response) => {
+      // console.log(response);
+      let data = response.data[0];
+      //Calculation values
+      let units = usStocks[i].units;
+      let investedNav = usStocks[i].avg;
+      let currentNav = data.price;
+      let priceChange = data.change;
+      let pricePercentChange = data.changesPercentage.toFixed(2);
+      let investmentValue = investedNav * units;
+      let currentValue = currentNav * units;
+      let investmentValueChange = (currentValue - investmentValue).toFixed(2);
+      let navChange = {
+        price: priceChange,
+        percentage: `${pricePercentChange}%`,
+      };
+      let dailyStockPriceChange = priceChange * units;
+      let totalInvestmentChange = {
+        price: investmentValueChange,
+        percentage: `${(
+          (100 * investmentValueChange) /
+          investmentValue
+        ).toFixed(2)}%`,
+      };
+      let tempStocks = {
+        id: data.name,
+        name: data.name.toString(),
+        units: units,
+        investedNav: investedNav,
+        currentNav: currentNav,
+        investmentValue: investmentValue,
+        currentValue: currentValue,
+        hasTimeStamp: true,
+        lastUpdated: data.timestamp,
+        dailyPriceChange: dailyStockPriceChange,
+        navChange: navChange,
+        investmentChange: totalInvestmentChange,
+      };
+      usStocksList.push(tempStocks);
+    });
+  }
+  let totalUSStocksInvestment = usStocksList.reduce(
+    (acc, item) => acc + item.investmentValue,
+    0
+  );
+  let totalUSStocksValue = usStocksList.reduce(
+    (acc, item) => acc + item.currentValue,
+    0
+  );
+  let totalUSStocksPL = totalUSStocksValue - totalUSStocksInvestment;
+  let totalUSStocksPLPercentage = (
+    (100 * totalUSStocksPL) /
+    totalUSStocksInvestment
+  ).toFixed(2);
+  let dailyUSStockPriceChange = usStocks.reduce(
+    (acc, item) => acc + item.dailyPriceChange,
+    0
+  );
+  let dailyUSStockPercentageChange = (
+    (100 * dailyUSStockPriceChange) /
+    totalUSStocksInvestment
+  ).toFixed(2);
   //Stocks
+  let stocks = [];
   let indianStocks = portfolio.indianStocks;
   for (let i = 0; i < indianStocks.length; i++) {
     await axios(yahooFinance + indianStocks[i].id).then((response) => {
@@ -164,6 +230,13 @@ router.post("/", authorization, async (req, res) => {
   ).toFixed(2);
 
   res.send({
+    us: {
+      stocks: {
+        data: usStocksList,
+      },
+      totalInvestment: totalUSStocksInvestment,
+      currentInvestmentValue: totalUSStocksValue,
+    },
     mutualFunds: {
       totalMFInvestment: totalMFInvestment,
       totalMFValue: totalMFValue,
