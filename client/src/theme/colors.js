@@ -41,6 +41,8 @@ const colors = {
   creditTransactionTintColor: 'rgb(0,128,0)',
   creditTransactionAmountColor: 'white',
   debitTransactionAmountColor: 'white',
+  positiveColor: '#B4FF9F',
+  negativeColor: '#FD5D5D',
 };
 
 export default colors;
