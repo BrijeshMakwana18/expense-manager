@@ -24,7 +24,6 @@ import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddExpense} from './actions';
 import {fetchDashboard} from '../../Home/actions';
-import {handleFetchStat} from '../../Statistics/actions';
 import {getDisplayDate} from '../../../utils/globalMethods';
 //Categories data
 const data = [
@@ -448,10 +447,6 @@ class AddExpense extends Component {
           params: dashboardParams,
           token: this.props.LoginReducer.user.token,
         });
-        this.props.handleFetchStat({
-          params: statisticsParams,
-          token: this.props.LoginReducer.user.token,
-        });
         if (response.responseType) {
           this.props.navigation.navigate('TransactionSuccess', {
             isFromExpense: true,
@@ -805,7 +800,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   handleAddExpense: handleAddExpense,
   fetchDashboard: fetchDashboard,
-  handleFetchStat: handleFetchStat,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddExpense);

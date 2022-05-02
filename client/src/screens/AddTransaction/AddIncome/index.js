@@ -21,7 +21,6 @@ import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddIncome} from './actions';
 import {fetchDashboard} from '../../Home/actions';
-import {handleFetchStat} from '../../Statistics/actions';
 //Months for date picker
 let months = [
   'January',
@@ -265,10 +264,6 @@ class AddIncome extends Component {
           params: dashboardParams,
           token: this.props.LoginReducer.user.token,
         });
-        this.props.handleFetchStat({
-          params: statisticsParams,
-          token: this.props.LoginReducer.user.token,
-        });
         this.props.navigation.navigate('TransactionSuccess', {
           isFromIncome: true,
           amount: response.transaction.amount,
@@ -457,7 +452,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   handleAddIncome: handleAddIncome,
   fetchDashboard: fetchDashboard,
-  handleFetchStat: handleFetchStat,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddIncome);
