@@ -10,17 +10,18 @@ import {
   Animated,
   Platform,
   Easing,
+  FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {logout} from '../Login/actions';
-import {fetchDashboard} from './actions';
+import {fetchDashboard, fetchInvestments} from './actions';
 import {
   DashboardSkeleton,
-  ButtonWithImage,
   ErrorSlider,
   Filter,
   NoDataFound,
   DatePicker,
+  CircularProgress,
 } from '../../components';
 import {colors, strings, images, perfectSize, fonts} from '../../theme';
 import styles from './styles';
@@ -29,13 +30,68 @@ import {
   getCurrentMonth,
   getCurrentTimestamps,
 } from '../../utils/globalMethods';
-
+const CircularChart = ({item, index}) => {
+  return (
+    <View
+      style={[
+        styles.catContainer,
+        {
+          backgroundColor: colors.secondaryBackgroundColor,
+          marginTop: index <= 1 ? '5%' : 0,
+          marginBottom: '2%',
+        },
+      ]}>
+      <CircularProgress
+        percent={item.percentage}
+        radius={perfectSize(50)}
+        bgRingWidth={perfectSize(12)}
+        progressRingWidth={perfectSize(10)}
+        ringColor={colors.primaryAppColor}
+        ringBgColor={colors.tabBarBackgroundColor}
+        textFontSize={perfectSize(18)}
+        textFontColor={colors.titleColor}
+        textFontWeight={'bold'}
+        clockwise={true}
+        bgColor={'white'}
+        startDegrees={0}
+        marginTop="10%"
+      />
+      <Text
+        style={{
+          fontSize: perfectSize(18),
+          fontFamily: fonts.quicksandBold,
+          color: colors.titleColor,
+          marginTop: '10%',
+        }}>
+        {item.title}
+      </Text>
+      <Text
+        style={{
+          fontSize: perfectSize(18),
+          fontFamily: fonts.quicksandBold,
+          color: colors.titleColor,
+          marginTop: '5%',
+        }}>
+        {parseFloat(item.total).toFixed(2)}
+      </Text>
+      {/* <Text
+        style={{
+          fontSize: perfectSize(20),
+          fontFamily: fonts.avenirMedium,
+          color: colors.titleColor,
+          fontWeight: 'bold',
+        }}>
+        {`${item.numberOfTransactions} ${strings.statistics.transactions}`}
+      </Text> */}
+    </View>
+  );
+};
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: true,
-      selectedFilter: 'month',
+      selectedFilter: 'all',
       monthFilter: getCurrentMonth(),
       datePicker: false,
       selectedStartDateTimeStamp: getCurrentTimestamps().start,
