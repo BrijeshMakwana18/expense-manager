@@ -102,6 +102,12 @@ class Home extends Component {
   }
   componentDidMount() {
     this.fetchDashboard();
+    const params = {
+      id: this.props.LoginReducer.user.id,
+    };
+    this.props.fetchInvestments({
+      params,
+    });
   }
   fetchDashboard() {
     this.setState({
@@ -157,7 +163,7 @@ class Home extends Component {
       this.showError();
     } else {
       this.setState({datePicker: false});
-      this.fetchDashboard();
+      this.handleDashboardSort();
     }
   };
   handleCancelDate = () => {
@@ -290,28 +296,18 @@ class Home extends Component {
   handleFilterPress = filter => {
     switch (filter) {
       case 'all':
-        this.setState(
-          {
-            selectedFilter: 'all',
-            selectedStartDateTimeStamp: null,
-            selectedEndDateTimeStamp: null,
-          },
-          () => {
-            this.fetchDashboard();
-          },
-        );
+        this.setState({
+          selectedFilter: 'all',
+          selectedStartDateTimeStamp: null,
+          selectedEndDateTimeStamp: null,
+        });
         break;
       case 'month':
-        this.setState(
-          {
-            selectedFilter: 'month',
-            selectedStartDateTimeStamp: getCurrentTimestamps().start,
-            selectedEndDateTimeStamp: getCurrentTimestamps().end,
-          },
-          () => {
-            this.fetchDashboard();
-          },
-        );
+        this.setState({
+          selectedFilter: 'month',
+          selectedStartDateTimeStamp: getCurrentTimestamps().start,
+          selectedEndDateTimeStamp: getCurrentTimestamps().end,
+        });
         break;
       case 'custom':
         this.setState({
@@ -322,6 +318,9 @@ class Home extends Component {
         break;
     }
   };
+  handleDashboardSort() {
+    const {selectedStartDateTimeStamp, selectedEndDateTimeStamp} = this.state;
+  }
   render() {
     const {
       isLoading,
@@ -337,6 +336,8 @@ class Home extends Component {
       dashboardExpenseTitle,
       topCatHeader,
       recentTransactionsHeader,
+      dashboardInvestmentTitle,
+      summary,
     } = strings.homeScreen;
 
     const {dashboardData} = this.props.AppReducer;
@@ -383,13 +384,13 @@ class Home extends Component {
                     ).toFixed(2)}
                   </Text>
                   <View style={styles.dashboardInnerContainer}>
-                    <View style={styles.incomeContainer}>
+                    <View style={styles.investmentContainer}>
                       <View>
-                        <Text style={styles.dashboardIncomeHeaderStyle}>
-                          {dashboardIncomeTitle}
+                        <Text style={styles.dashboardInvestmentHeaderStyle}>
+                          {dashboardInvestmentTitle}
                         </Text>
-                        <Text style={styles.dashboardIncomeStyle}>
-                          {dashboardData.totalIncome}
+                        <Text style={styles.dashboardInvestmentStyle}>
+                          {dashboardData.totalInvestment}
                         </Text>
                       </View>
                     </View>
@@ -458,6 +459,44 @@ class Home extends Component {
                     </View>
                   </View>
                 ) : null}
+                {dashboardData.stat.stat && (
+                  <View
+                    style={{
+                      marginTop: '5%',
+                    }}>
+                    <Text style={styles.summaryTitle}>{summary}</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: '3.33%',
+                      }}>
+                      <CircularChart
+                        item={dashboardData.stat.stat[0]}
+                        index={0}
+                      />
+                      <CircularChart
+                        item={dashboardData.stat.stat[1]}
+                        index={1}
+                      />
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginTop: '3.33%',
+                      }}>
+                      <CircularChart
+                        item={dashboardData.stat.stat[2]}
+                        index={2}
+                      />
+                      <CircularChart
+                        item={dashboardData.stat.stat[3]}
+                        index={3}
+                      />
+                    </View>
+                  </View>
+                )}
                 {dashboardData.allTransactions.length > 0 ? (
                   <View style={styles.recentTransactionsListContainer}>
                     <View style={styles.catHeaderContainer}>
@@ -526,6 +565,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   logout: logout,
   fetchDashboard: fetchDashboard,
+  fetchInvestments: fetchInvestments,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
