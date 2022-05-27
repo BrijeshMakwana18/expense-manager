@@ -49,7 +49,7 @@ export default styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: '5%',
   },
-  incomeContainer: {
+  investmentContainer: {
     width: '50%',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -59,7 +59,7 @@ export default styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
-  dashboardIncomeHeaderStyle: {
+  dashboardInvestmentHeaderStyle: {
     fontSize: perfectSize(16),
     fontFamily: fonts.avenirMedium,
     color: colors.titleColor,
@@ -73,7 +73,7 @@ export default styles = StyleSheet.create({
     opacity: 0.7,
     letterSpacing: perfectSize(0.5),
   },
-  dashboardIncomeStyle: {
+  dashboardInvestmentStyle: {
     color: colors.titleColor,
     fontFamily: fonts.quicksandBold,
     fontSize: perfectSize(22),
@@ -148,6 +148,11 @@ export default styles = StyleSheet.create({
     fontSize: perfectSize(18),
     color: colors.titleColor,
     fontFamily: fonts.quicksandBold,
+  },
+  summaryTitle: {
+    fontSize: perfectSize(18),
+    fontFamily: fonts.quicksandBold,
+    color: colors.titleColor,
   },
   recentTransactionsListContainer: {
     width: '100%',
