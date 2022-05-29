@@ -3,284 +3,316 @@ import {
   Text,
   View,
   StatusBar,
-  Animated,
-  Platform,
-  Easing,
-  FlatList,
+  ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {handleFetchStat} from './actions';
-import {
-  CircularProgress,
-  StatSkeleton,
-  Filter,
-  DatePicker,
-  NoDataFound,
-} from '../../components';
+import {StatSkeleton} from '../../components';
 import {colors, strings, perfectSize, fonts} from '../../theme';
+import {fetchInvestments} from '../Home/actions';
 import styles from './styles';
-import {
-  getDisplayDate,
-  getCurrentTimestamps,
-  getCurrentMonth,
-} from '../../utils/globalMethods';
-const CircularChart = ({item, index}) => {
-  return (
-    <View
-      style={{
-        alignItems: 'center',
-        backgroundColor: colors.tabBarBackgroundColor,
-        borderRadius: perfectSize(10),
-        width: '45%',
-        height: perfectSize(300),
-      }}>
-      <CircularProgress
-        percent={item.percentage}
-        radius={perfectSize(80)}
-        bgRingWidth={perfectSize(10)}
-        progressRingWidth={perfectSize(10)}
-        ringColor={colors.primaryAppColor}
-        ringBgColor={colors.secondaryBackgroundColor}
-        textFontSize={perfectSize(25)}
-        textFontColor={colors.titleColor}
-        textFontWeight={'bold'}
-        clockwise={true}
-        bgColor={'white'}
-        startDegrees={0}
-      />
-      <Text
-        style={{
-          fontSize: perfectSize(23),
-          fontFamily: fonts.quicksandBold,
-          color: colors.titleColor,
-        }}>
-        {item.title}
-      </Text>
-      <Text
-        style={{
-          fontSize: perfectSize(20),
-          fontFamily: fonts.avenirMedium,
-          color: colors.titleColor,
-        }}>
-        {item.total}
-      </Text>
-      <Text
-        style={{
-          fontSize: perfectSize(20),
-          fontFamily: fonts.avenirMedium,
-          color: colors.titleColor,
-          fontWeight: 'bold',
-        }}>
-        {`${item.numberOfTransactions} ${strings.statistics.transactions}`}
-      </Text>
-    </View>
-  );
-};
+import {FlatList} from 'react-native-gesture-handler';
+const INDIA = 'INDIA';
+const US = 'US';
 class Statistics extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFilter: 'month',
-      stats: false,
-      monthFilter: getCurrentMonth(),
-      selectedStartDateTimeStamp: getCurrentTimestamps().start,
-      selectedEndDateTimeStamp: getCurrentTimestamps().end,
-      datePicker: false,
-      error: false,
+      market: US,
     };
-    this.errorModalTop = new Animated.Value(perfectSize(-500));
   }
 
-  componentDidMount() {
-    this.fetchStats();
-  }
-  fetchStats() {
-    this.setState({
-      stats: false,
-    });
-    const params = {
-      id: this.props.LoginReducer.user.id,
-      statisticsType: this.state.selectedFilter,
-      customStatisticsDate: {
-        start: this.state.selectedStartDateTimeStamp,
-        end: this.state.selectedEndDateTimeStamp,
-      },
+  getPortfolio() {
+    const {isInvestmentsLoading, investments, dashboardData} =
+      this.props.AppReducer;
+    let MF = investments.mutualFunds;
+    let stocks = investments.stocks;
+    let totalInvestmentValue = dashboardData.totalInvestment;
+    let currentInvestmentValue = MF.totalMFValue + stocks.totalStocksValue;
+    let PL = currentInvestmentValue - totalInvestmentValue;
+    let PLPercentage = parseFloat((100 * PL) / totalInvestmentValue);
+
+    let usStocks = investments.us.stocks;
+    let totalUSInvestment = investments.us.totalInvestment;
+    let currentUSInvestmentValue = investments.us.currentInvestmentValue;
+    let usPL = currentUSInvestmentValue - totalUSInvestment;
+    let usPLPercentage = parseFloat((100 * usPL) / totalUSInvestment);
+    if (this.state.market === US) {
+      return {
+        totalInvestmentValue: parseFloat(totalUSInvestment).toFixed(2),
+        currentInvestmentValue: parseFloat(currentUSInvestmentValue).toFixed(2),
+        PL: parseFloat(usPL).toFixed(2),
+        PLPercentage: usPLPercentage.toFixed(2),
+      };
+    }
+    return {
+      totalInvestmentValue: parseFloat(totalInvestmentValue).toFixed(2),
+      currentInvestmentValue: parseFloat(currentInvestmentValue).toFixed(2),
+      PL: parseFloat(PL).toFixed(2),
+      PLPercentage: PLPercentage.toFixed(2),
     };
-    this.props.handleFetchStat({
-      params,
-      token: this.props.LoginReducer.user.token,
-      onSuccess: response => {
-        console.log(response);
-        if (response.responseType) {
-          this.setState({
-            stats: response.stat,
-            error: false,
-          });
-        } else {
-          this.setState({
-            error: response.error,
-          });
-        }
-      },
-      onError: error => {
-        console.log('error', error);
-      },
-    });
   }
-  handleFilterPress = filter => {
-    switch (filter) {
-      case 'all':
-        this.setState(
-          {
-            selectedFilter: 'all',
-            selectedStartDateTimeStamp: null,
-            selectedEndDateTimeStamp: null,
-          },
-          () => {
-            this.fetchStats();
-          },
-        );
-        break;
-      case 'month':
-        this.setState(
-          {
-            selectedFilter: 'month',
-            selectedStartDateTimeStamp: getCurrentTimestamps().start,
-            selectedEndDateTimeStamp: getCurrentTimestamps().end,
-          },
-          () => {
-            this.fetchStats();
-          },
-        );
-        break;
-      case 'custom':
-        this.setState({
-          selectedStartDateTimeStamp: null,
-          selectedEndDateTimeStamp: null,
-        });
-        this.setState({selectedFilter: 'custom', datePicker: true});
-        break;
-    }
-  };
-  onDateChange = (date, type) => {
-    if (date != null) {
-      date = new Date(date);
-    }
-    if (type === 'END_DATE') {
-      this.setState({
-        selectedEndDateTimeStamp: date,
-      });
-    } else {
-      this.setState({
-        selectedStartDateTimeStamp: date,
-        selectedEndDateTimeStamp: null,
-      });
-    }
-  };
-  handleDateSubmit = () => {
-    const {selectedStartDateTimeStamp, selectedEndDateTimeStamp} = this.state;
-    if (
-      selectedStartDateTimeStamp == null ||
-      selectedEndDateTimeStamp == null
-    ) {
-      this.showError();
-    } else {
-      this.setState({datePicker: false});
-      this.fetchStats();
-    }
-  };
-  handleCancelDate = () => {
-    const {selectedStartDateTimeStamp, selectedEndDateTimeStamp} = this.state;
-    if (selectedEndDateTimeStamp && selectedStartDateTimeStamp) {
-      this.setState({
-        datePicker: false,
-      });
-    } else {
-      this.setState({
-        selectedFilter: 'all',
-        datePicker: false,
-      });
-    }
-  };
-  showError = () => {
-    Animated.timing(this.errorModalTop, {
-      toValue: Platform.OS == 'ios' ? perfectSize(50) : perfectSize(40),
-      duration: 1000,
-      useNativeDriver: false,
-      easing: Easing.elastic(Platform.OS == 'android' ? 1 : 1),
-    }).start();
-    setTimeout(() => {
-      Animated.timing(this.errorModalTop, {
-        toValue: -perfectSize(500),
-        duration: 1000,
-        useNativeDriver: false,
-      }).start();
-    }, 2000);
-  };
-  render() {
-    const {
-      stats,
-      selectedFilter,
-      selectedStartDateTimeStamp,
-      selectedEndDateTimeStamp,
-      error,
-    } = this.state;
+
+  renderStocks = (item, index) => {
     return (
-      <>
+      <View style={styles.stockContainer} key={index}>
+        <View
+          style={{
+            width: '60%',
+          }}>
+          <Text style={styles.investedNav}>{`Avg: ${item.investedNav}`}</Text>
+          <Text style={styles.stockTitle} numberOfLines={1}>
+            {item.name ? item.name.toUpperCase() : item.id}
+          </Text>
+          <Text
+            style={
+              styles.investedValue
+            }>{`Invested: ${item.investmentValue}`}</Text>
+        </View>
+        <View
+          style={{
+            alignItems: 'flex-end',
+            width: '40%',
+          }}>
+          <Text
+            style={[
+              styles.investedNav,
+              {
+                color:
+                  parseFloat(item.investmentChange.percentage) > 0
+                    ? colors.positiveColor
+                    : colors.negativeColor,
+              },
+            ]}>
+            {item.investmentChange.percentage}
+          </Text>
+          <Text
+            style={[
+              styles.stockTitle,
+              {
+                color:
+                  item.investmentChange.price > 0
+                    ? colors.positiveColor
+                    : colors.negativeColor,
+              },
+            ]}>
+            {item.investmentChange.price}
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text
+              style={[
+                styles.investedValue,
+                {
+                  marginRight: perfectSize(10),
+                },
+              ]}>
+              {item.currentNav}
+            </Text>
+            <Text
+              style={[
+                styles.investedValue,
+                {
+                  color:
+                    parseFloat(item.navChange.percentage) > 0
+                      ? colors.positiveColor
+                      : colors.negativeColor,
+                },
+              ]}>
+              {item.navChange.percentage}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
+  render() {
+    const {market} = this.state;
+    const {investments, isInvestmentsLoading} = this.props.AppReducer;
+    const {totalInvestmentValue, currentInvestmentValue, PL, PLPercentage} =
+      this.getPortfolio();
+
+    return (
+      <View style={styles.container}>
         <StatusBar
           translucent
           backgroundColor={colors.primaryBackgroundColor}
           barStyle="light-content"
         />
-        <View style={styles.container}>
-          {!stats && !error ? (
-            <StatSkeleton />
-          ) : (
-            <>
-              <Filter
-                selectedFilter={selectedFilter}
-                selectedStartDateTimeStamp={selectedStartDateTimeStamp}
-                selectedEndDateTimeStamp={selectedEndDateTimeStamp}
-                onPress={filterType => this.handleFilterPress(filterType)}
+        {isInvestmentsLoading &&
+        investments.mutualFunds === {} &&
+        investments.stocks === {} ? (
+          <StatSkeleton />
+        ) : (
+          <>
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                flexDirection: 'row',
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    market: INDIA,
+                  });
+                }}
+                style={{
+                  height: perfectSize(40),
+                  width: perfectSize(150),
+                  borderRadius: perfectSize(2),
+                  backgroundColor:
+                    this.state.market === INDIA
+                      ? colors.primaryAppColor
+                      : colors.secondaryBackgroundColor,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: perfectSize(16),
+                    color: colors.titleColor,
+                    fontFamily: fonts.quicksandBold,
+                  }}>
+                  INDIA
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    market: US,
+                  });
+                }}
+                style={{
+                  height: perfectSize(40),
+                  width: perfectSize(150),
+                  borderRadius: perfectSize(2),
+                  backgroundColor:
+                    this.state.market === US
+                      ? colors.primaryAppColor
+                      : colors.secondaryBackgroundColor,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: perfectSize(16),
+                    color: colors.titleColor,
+                    fontFamily: fonts.quicksandBold,
+                  }}>
+                  US
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.portfolioContainer}>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <View>
+                  <Text style={styles.portfolioInvestTitle}>
+                    Invested Value
+                  </Text>
+                  <Text style={styles.portfolioValue}>
+                    {totalInvestmentValue}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={styles.portfolioInvestTitle}>Current Value</Text>
+                  <Text style={styles.portfolioValue}>
+                    {currentInvestmentValue}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  width: '100%',
+                  height: 2,
+                  marginTop: perfectSize(15),
+                  backgroundColor: colors.primaryBackgroundColor,
+                }}
               />
-              {error ? (
-                <NoDataFound error={error} />
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: perfectSize(15),
+                }}>
+                <View>
+                  <Text
+                    style={[
+                      styles.portfolioInvestTitle,
+                      {fontSize: perfectSize(23)},
+                    ]}>
+                    {'P&L'}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <Text
+                    style={[
+                      styles.portfolioValue,
+                      {
+                        marginRight: perfectSize(10),
+                        color:
+                          PLPercentage > 0
+                            ? colors.positiveColor
+                            : colors.negativeColor,
+                      },
+                    ]}>
+                    {PL}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.portfolioValue,
+                      {
+                        fontSize: perfectSize(14),
+                        color:
+                          PLPercentage > 0
+                            ? colors.positiveColor
+                            : colors.negativeColor,
+                      },
+                    ]}>
+                    {`${PLPercentage}%`}
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.listTitle}>Current Holdings</Text>
+              {this.state.market === INDIA ? (
+                <>
+                  {investments.stocks.data.map((item, index) => {
+                    return this.renderStocks(item, index);
+                  })}
+                  <Text
+                    style={[styles.listTitle, {marginTop: perfectSize(10)}]}>
+                    Mutual Funds
+                  </Text>
+                  <View
+                    style={{
+                      marginBottom: '20%',
+                    }}>
+                    {investments.mutualFunds.data.map((item, index) => {
+                      if (item.units) return this.renderStocks(item, index);
+                    })}
+                  </View>
+                </>
               ) : (
-                <FlatList
-                  data={stats}
-                  numColumns={2}
-                  scrollEnabled={false}
-                  contentContainerStyle={{
-                    flex: 1,
-                    justifyContent: 'space-around',
-                  }}
-                  columnWrapperStyle={{
-                    justifyContent: 'space-around',
-                  }}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={({item, index}) => {
-                    return <CircularChart item={item} />;
-                  }}
-                />
+                investments.us.stocks.data.map((item, index) => {
+                  return this.renderStocks(item, index);
+                })
               )}
-            </>
-          )}
-        </View>
-        <DatePicker
-          errorModalTop={this.errorModalTop}
-          visible={this.state.datePicker}
-          handleCancelDate={() => this.handleCancelDate()}
-          handleDateSubmit={() => this.handleDateSubmit()}
-          onDateChange={this.onDateChange}
-          rangeSelected={
-            selectedStartDateTimeStamp && selectedEndDateTimeStamp
-              ? true
-              : false
-          }
-          startDate={getDisplayDate(selectedStartDateTimeStamp)}
-          endDate={getDisplayDate(selectedEndDateTimeStamp)}
-        />
-      </>
+            </ScrollView>
+          </>
+        )}
+      </View>
     );
   }
 }
@@ -290,7 +322,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  handleFetchStat: handleFetchStat,
+  fetchInvestments: fetchInvestments,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Statistics);
