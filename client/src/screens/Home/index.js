@@ -39,6 +39,7 @@ const CircularChart = ({item, index}) => {
           backgroundColor: colors.secondaryBackgroundColor,
           marginTop: index <= 1 ? '5%' : 0,
           marginBottom: '2%',
+          height: 'auto'
         },
       ]}>
       <CircularProgress
@@ -71,6 +72,7 @@ const CircularChart = ({item, index}) => {
           fontFamily: fonts.quicksandBold,
           color: colors.titleColor,
           marginTop: '5%',
+          marginBottom: '10%',
         }}>
         {parseFloat(item.total).toFixed(2)}
       </Text>
