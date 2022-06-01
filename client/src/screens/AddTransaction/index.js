@@ -10,6 +10,7 @@ import {
   DeviceEventEmitter,
   TouchableOpacity,
   FlatList,
+  BackHandler
 } from 'react-native';
 import {colors, perfectSize} from '../../theme';
 import {connect} from 'react-redux';
@@ -40,7 +41,16 @@ class AddTransaction extends Component {
     this.state = {};
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.hardwareBackHandler = BackHandler.addEventListener("hardwareBackPress",()=>{
+      this.onBackButtonTapped()
+    })
+  }
+
+  componentWillUnmount(){
+    this.hardwareBackHandler.remove()
+  }
+
   onBackButtonTapped = () => {
     DeviceEventEmitter.emit('HideTabBar', false);
     this.props.navigation.goBack();
