@@ -1,15 +1,19 @@
 export function USER_SIGNUP() {
-  return 'https://coin-sheet.herokuapp.com/api/v1/register';
+  return 'https://coinsheet.herokuapp.com/api/v1/register';
 }
 export function USER_LOGIN() {
-  return 'https://coin-sheet.herokuapp.com/api/v1/login';
+  return 'https://coinsheet.herokuapp.com/api/v1/login';
 }
 export function ADD_TRANSACTION() {
-  return 'https://coin-sheet.herokuapp.com/api/v1/transaction';
+  return 'https://coinsheet.herokuapp.com/api/v1/transaction';
 }
 export function FETCH_DASHBOARD() {
-  return 'https://coin-sheet.herokuapp.com/api/v1/dashboard';
+  return 'https://coinsheet.herokuapp.com/api/v1/dashboard';
 }
 export function FETCH_STAT() {
-  return 'https://coin-sheet.herokuapp.com/api/v1/stat';
+  return 'https://coinsheet.herokuapp.com/api/v1/stat';
+}
+
+export function FETCH_INVESTMETNS() {
+  return 'https://coinsheet.herokuapp.com/api/v1/investments';
 }

@@ -1,11 +1,3 @@
-/**
- * Alshaya Framework
- * Version 0.1
- * Filename: configureStore.js
- * created on 25 Dec 2019
- *
- */
-
 import {createStore, applyMiddleware} from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import {persistStore, createTransform, persistReducer} from 'redux-persist';
