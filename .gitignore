@@ -30,7 +30,7 @@ build/
 local.properties
 *.iml
 *.hprof
-
+/client/src/configs
 # node.js
 #
 /client/node_modules/
