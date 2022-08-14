@@ -33,7 +33,7 @@ router.post("/", authenticateToken, async (req, res) => {
       .catch((error) => {
         res.send({
           responseType: false,
-          error: err,
+          error: error,
         });
       });
   } else {

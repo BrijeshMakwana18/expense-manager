@@ -16,9 +16,8 @@ const transactionSchema = new mongoose.Schema({
   },
   notes: {
     required: true,
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     min: 0,
-    max: 256,
   },
   transactionCat: {
     required: false,
