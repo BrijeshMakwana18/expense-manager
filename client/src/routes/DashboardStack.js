@@ -4,7 +4,12 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 import {Home} from '../screens';
-import {AddExpense, TransactionList, AllExpenseCat} from '../screens';
+import {
+  AddExpense,
+  TransactionList,
+  AllExpenseCat,
+  TransactionSuccess,
+} from '../screens';
 const Stack = createStackNavigator();
 
 export default function DashboardStack() {
@@ -34,6 +39,11 @@ export default function DashboardStack() {
       <Stack.Screen
         name="AllExpenseCat"
         component={AllExpenseCat}
+        options={{header: () => null}}
+      />
+      <Stack.Screen
+        name="TransactionSuccess"
+        component={TransactionSuccess}
         options={{header: () => null}}
       />
     </Stack.Navigator>
