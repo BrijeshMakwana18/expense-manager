@@ -25,6 +25,7 @@ import styles from './styles';
 import {handleAddExpense} from './actions';
 import {fetchDashboard} from '../../Home/actions';
 import {getDisplayDate} from '../../../utils/globalMethods';
+import {encrypt, decryptV1} from '../../../configs';
 //Categories data
 const data = [
   {
@@ -155,7 +156,7 @@ class AddExpense extends Component {
     this.state = {
       amount: this.props.route?.params?.item?.amount.toString() || '',
       // payee: '',
-      notes: this.props.route?.params?.item?.notes || '',
+      notes: decryptV1(this.props.route?.params?.item?.notes),
       selectedCat:
         this.props.route?.params?.item?.transactionCat.toUpperCase() || '',
       // displayDate:
@@ -384,7 +385,7 @@ class AddExpense extends Component {
       type: 'debit',
       amount: parseFloat(amount),
       transactionDate: selectedDate,
-      notes: notes,
+      notes: encrypt(notes),
       transactionCat: selectedCat.toLowerCase(),
       expenseType: selectedExpenseType,
       id: this.props.route.params.item._id,
@@ -405,7 +406,7 @@ class AddExpense extends Component {
             isUpdate: true,
             isFromExpense: true,
             amount: response.transaction.amount,
-            notes: response.transaction.notes,
+            notes: decryptV1(response.transaction.notes),
             transactionDate: response.transaction.transactionDate,
             selectedCat: response.transaction.transactionCat,
             expenseType: response.transaction.expenseType,
@@ -426,7 +427,7 @@ class AddExpense extends Component {
       type: 'debit',
       amount: parseFloat(amount),
       transactionDate: selectedDate,
-      notes: notes,
+      notes: encrypt(notes),
       transactionCat: selectedCat.toLowerCase(),
       expenseType: selectedExpenseType,
     };
@@ -451,7 +452,7 @@ class AddExpense extends Component {
           this.props.navigation.navigate('TransactionSuccess', {
             isFromExpense: true,
             amount: response.transaction.amount,
-            notes: response.transaction.notes,
+            notes: decryptV1(response.transaction.notes),
             transactionDate: response.transaction.transactionDate,
             selectedCat: response.transaction.transactionCat,
             expenseType: response.transaction.expenseType,
