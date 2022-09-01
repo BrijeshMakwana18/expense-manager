@@ -30,6 +30,7 @@ import {
   getCurrentMonth,
   getCurrentTimestamps,
 } from '../../utils/globalMethods';
+import {encrypt, decryptV1} from '../../configs';
 const CircularChart = ({item, index}) => {
   return (
     <View
@@ -39,7 +40,7 @@ const CircularChart = ({item, index}) => {
           backgroundColor: colors.secondaryBackgroundColor,
           marginTop: index <= 1 ? '5%' : 0,
           marginBottom: '2%',
-          height: 'auto'
+          height: 'auto',
         },
       ]}>
       <CircularProgress
@@ -272,7 +273,7 @@ class Home extends Component {
               ellipsizeMode="tail"
               numberOfLines={1}
               style={styles.recentTransactionsTitle}>
-              {item.notes}
+              {decryptV1(item.notes)}
             </Text>
             <Text style={styles.recentTransactionsDate}>
               {getDisplayDate(item.transactionDate)}
@@ -356,7 +357,7 @@ class Home extends Component {
           <View style={styles.container}>
             <View style={styles.headerContainer}>
               <Text
-                onPress={() => this.props.logout()}
+                onPress={() => encrypt('AaVvGg')}
                 style={styles.headerTitle}>
                 {`${title} ${user.username}`}
               </Text>
