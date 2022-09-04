@@ -12,6 +12,7 @@ import {strings, images, colors, perfectSize, fonts} from '../../theme';
 import styles from './styles';
 import {connect} from 'react-redux';
 import {getDisplayDate} from '../../utils/globalMethods';
+import {decryptV1} from '../../configs/index';
 class TransactionList extends Component {
   constructor(props) {
     super(props);
@@ -80,7 +81,7 @@ class TransactionList extends Component {
           </View>
           <View style={styles.transactionDetailsContainer}>
             <Text numberOfLines={1} style={styles.transactionNotes}>
-              {notes}
+              {decryptV1(notes)}
             </Text>
             <Text style={styles.transactionDate}>
               {getDisplayDate(transactionDate)}
