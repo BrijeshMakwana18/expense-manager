@@ -1,13 +1,14 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
-import {View, Text, Image, StatusBar} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, Image, StatusBar, DeviceEventEmitter} from 'react-native';
 import styles from './styles';
 import {images, colors, strings, perfectSize} from '../../theme';
 import {Button} from '../../components';
 import {getDisplayDate} from '../../utils/globalMethods';
 export default function TransactionSuccess({navigation, route}) {
   const handleOnSubmit = () => {
-    navigation.navigate('AddTransaction');
+    DeviceEventEmitter.emit('HideTabBar', false);
+    navigation.navigate('Home');
   };
   let {
     successMessage,
@@ -19,6 +20,9 @@ export default function TransactionSuccess({navigation, route}) {
     expenseHeader,
   } = strings.transactionSuccess;
   let {isFromIncome, amount, transactionDate} = route.params;
+  useEffect(() => {
+    DeviceEventEmitter.emit('HideTabBar', true);
+  }, []);
   return (
     <View style={styles.container}>
       <StatusBar
