@@ -8,7 +8,7 @@ router.post("/", authenticateToken, async (req, res) => {
 
   query.exec((err, response) => {
     if (err) {
-      res.send(err);
+      res.end(err);
     } else {
       const allTransactions = response;
       const creditTransactions = response.filter(
@@ -203,6 +203,7 @@ router.post("/", authenticateToken, async (req, res) => {
       const dashboardData = {
         responseType: true,
         error: false,
+        minSupportVersion: "1.0.1",
         totalIncome: totalIncome.toFixed(2),
         totalExpense: (totalExpense - investmentTransactions.total).toFixed(2),
         totalInvestment: investmentTransactions.total.toFixed(2),

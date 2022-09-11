@@ -22,6 +22,7 @@ import {
   NoDataFound,
   DatePicker,
   CircularProgress,
+  Button,
 } from '../../components';
 import {colors, strings, images, perfectSize, fonts} from '../../theme';
 import styles from './styles';
@@ -31,6 +32,8 @@ import {
   getCurrentTimestamps,
 } from '../../utils/globalMethods';
 import {encrypt, decryptV1} from '../../configs';
+import {version} from '../../../package.json';
+const currentVersion = Number(version.split('.').join(''));
 const CircularChart = ({item, index}) => {
   return (
     <View
@@ -100,17 +103,18 @@ class Home extends Component {
       selectedStartDateTimeStamp: getCurrentTimestamps().start,
       selectedEndDateTimeStamp: getCurrentTimestamps().end,
       error: '',
+      forceUpdate: false,
     };
     this.errorModalTop = new Animated.Value(perfectSize(-500));
   }
   componentDidMount() {
     this.fetchDashboard();
-    const params = {
-      id: this.props.LoginReducer.user.id,
-    };
-    this.props.fetchInvestments({
-      params,
-    });
+    // const params = {
+    //   id: this.props.LoginReducer.user.id,
+    // };
+    // this.props.fetchInvestments({
+    //   params,
+    // });
   }
   fetchDashboard() {
     this.setState({
@@ -132,6 +136,16 @@ class Home extends Component {
           isLoading: false,
           error: '',
         });
+        let minSupportVersion =
+          this.props.AppReducer?.dashboardData?.minSupportVersion;
+        if (typeof minSupportVersion === 'string') {
+          minSupportVersion = Number(minSupportVersion.split('.').join(''));
+        }
+        if (currentVersion < minSupportVersion) {
+          this.setState({
+            forceUpdate: true,
+          });
+        }
       },
       onError: error => {
         this.setState({
@@ -356,18 +370,16 @@ class Home extends Component {
         ) : (
           <View style={styles.container}>
             <View style={styles.headerContainer}>
-              <Text
-                onPress={() => encrypt('AaVvGg')}
-                style={styles.headerTitle}>
+              <Text style={styles.headerTitle}>
                 {`${title} ${user.username}`}
               </Text>
             </View>
-            <Filter
+            {/* <Filter
               selectedFilter={selectedFilter}
               selectedStartDateTimeStamp={selectedStartDateTimeStamp}
               selectedEndDateTimeStamp={selectedEndDateTimeStamp}
               onPress={filterType => this.handleFilterPress(filterType)}
-            />
+            /> */}
             {dashboardData.allTransactions.length == 0 ? (
               <NoDataFound selectedFilter={selectedFilter} />
             ) : (
@@ -542,6 +554,46 @@ class Home extends Component {
             <ErrorSlider error={this.state.error} top={this.errorModalTop} />
           </View>
         )}
+        <Modal
+          transparent
+          style={{
+            flex: 1,
+            height: '100%',
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          visible={this.state.forceUpdate}>
+          <View
+            style={{
+              flex: 1,
+              height: '100%',
+              width: '100%',
+              padding: perfectSize(23),
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.8)',
+            }}>
+            <Text
+              style={{
+                fontSize: perfectSize(14),
+                color: 'white',
+                fontFamily: fonts.avenirHeavy,
+                marginBottom: perfectSize(24),
+                textAlign: 'center',
+                fontWeight: 'bold',
+              }}>
+              Please update the Coinsheet App we are no longer supporting
+              current version.
+            </Text>
+            <Button
+              title={'Update'}
+              onPress={() => {
+                //
+              }}
+            />
+          </View>
+        </Modal>
         <DatePicker
           errorModalTop={this.errorModalTop}
           visible={this.state.datePicker}

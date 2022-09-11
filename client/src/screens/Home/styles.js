@@ -20,8 +20,7 @@ export default styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    paddingLeft: perfectSize(23),
-    paddingRight: perfectSize(23),
+    padding: perfectSize(23),
   },
   dashboardContainer: {
     width: '100%',

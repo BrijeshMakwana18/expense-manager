@@ -180,7 +180,7 @@ function Login(props) {
             />
           </View>
         </TouchableWithoutFeedback>
-        <Text
+        {/* <Text
           onPress={() => handleForgotPassword()}
           style={{
             textAlign: 'right',
@@ -192,7 +192,7 @@ function Login(props) {
             letterSpacing: perfectSize(0.5),
           }}>
           FORGOT?
-        </Text>
+        </Text> */}
       </View>
       <View style={styles.bottomView}>
         <Button

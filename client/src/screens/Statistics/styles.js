@@ -8,6 +8,8 @@ export default styles = StyleSheet.create({
     backgroundColor: colors.primaryBackgroundColor,
     paddingTop: perfectSize(Platform.OS == 'ios' ? 56 : 40),
     padding: perfectSize(23),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   portfolioContainer: {
     alignItems: 'center',
