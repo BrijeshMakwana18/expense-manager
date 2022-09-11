@@ -17,7 +17,7 @@ export const request = (url, httpMethod, params, isWithToken, token) =>
     try {
       const tokenObj = isWithToken
         ? {
-            Authorization: `Bearer ${token}` /*the token is a variable which holds the token */,
+            Authorization: `Bearer 92272C13D94AFA77597BFF237EB821B6AB195779C594AB38EA103975AA65B76C` /*the token is a variable which holds the token */,
           }
         : {};
       const configObj = {

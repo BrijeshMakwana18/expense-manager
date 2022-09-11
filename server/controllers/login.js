@@ -39,6 +39,27 @@ router.post("/", async (req, res) => {
     };
     return res.send(response);
   }
+  // if (hashedpassword !== user.password) {
+  //   const hashResult = await hasher(password);
+  //   const { salt, hashedpassword } = hashResult;
+  //   const update = {
+  //     salt: salt,
+  //     password: hashedpassword,
+  //   };
+  //   await User.findOneAndUpdate({ email: email }, update)
+  //     .then((response) => {
+  //       res.send({
+  //         responseType: true,
+  //         error: false,
+  //         transaction: response,
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       res.send({
+  //         responseType: false,
+  //         error: err,
+  //       });
+  //     });
   if (hashedpassword === user.password) {
     res.header("auth-token", token).send({
       responseType: true,
