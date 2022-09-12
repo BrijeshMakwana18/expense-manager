@@ -45,6 +45,6 @@ const styles = StyleSheet.create({
     width: perfectSize(70),
     borderRadius: perfectSize(15),
     height: perfectSize(70),
-    top: -hp('2%'),
+    top: -hp('4%'),
   },
 });
