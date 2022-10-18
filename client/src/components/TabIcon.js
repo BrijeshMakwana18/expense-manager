@@ -24,9 +24,6 @@ export default function TabBarIcon(props) {
           style={{
             height: perfectSize(props.focused ? 50 : 30),
             width: perfectSize(props.focused ? 50 : 30),
-            // tintColor: props.focused
-            //   ? colors.activeTabColor
-            //   : colors.inactiveTabColor,
           }}
         />
       </View>
