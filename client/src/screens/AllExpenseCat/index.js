@@ -12,30 +12,30 @@ class AllExpenseCat extends Component {
 
   renderAllCat = (item, index) => {
     const {transaction, transactionsTitle} = strings.allExpenseCat;
-    const {total, cat, transactions} = item;
+    const {total, cat} = item;
     const {selectedFilter, dateRange} = this.props.route.params;
     let selectedStartDateTimeStamp, selectedEndDateTimeStamp;
     if (dateRange) {
       selectedStartDateTimeStamp = dateRange.start;
       selectedEndDateTimeStamp = dateRange.end;
     }
-    if (item.total > 0 && item.transactions && item.transactions.length > 0) {
+    if (item.total > 0) {
       return (
         <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate('TransactionList', {
-              selectedExpenseCat: cat,
-              isFromExpenseCat: true,
-              selectedFilter: selectedFilter,
-              dateRange:
-                selectedFilter === 'all'
-                  ? false
-                  : {
-                      start: selectedStartDateTimeStamp,
-                      end: selectedEndDateTimeStamp,
-                    },
-            });
-          }}
+          // onPress={() => {
+          //   this.props.navigation.navigate('TransactionList', {
+          //     selectedExpenseCat: cat,
+          //     isFromExpenseCat: true,
+          //     selectedFilter: selectedFilter,
+          //     dateRange:
+          //       selectedFilter === 'all'
+          //         ? false
+          //         : {
+          //             start: selectedStartDateTimeStamp,
+          //             end: selectedEndDateTimeStamp,
+          //           },
+          //   });
+          // }}
           style={[
             styles.catContainer,
             {
@@ -47,10 +47,6 @@ class AllExpenseCat extends Component {
           </View>
           <View style={styles.catDetailsContainer}>
             <Text style={styles.catTitle}>{cat.toUpperCase()}</Text>
-            <Text style={styles.numberOfTransactions}>
-              {transactions.length}{' '}
-              {transactions.length === 1 ? transaction : transactionsTitle}
-            </Text>
           </View>
           <Text
             style={[
@@ -59,7 +55,7 @@ class AllExpenseCat extends Component {
                 color: colors.titleColor,
               },
             ]}>
-            {total.toFixed(2)}
+            {total}
           </Text>
         </TouchableOpacity>
       );
