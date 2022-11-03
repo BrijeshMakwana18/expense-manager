@@ -40,6 +40,8 @@ const strings = {
   tabBarLabels: {
     home: 'Dashboard',
     stat: 'Statistics',
+    plan: 'Plan',
+    goal: 'Goal',
   },
   addTransaction: {},
   addIncome: {
