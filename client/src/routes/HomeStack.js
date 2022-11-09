@@ -33,7 +33,6 @@ export default function HomeStack() {
         style: {
           backgroundColor: colors.tabBarBackgroundColor,
           height: perfectSize(80),
-          borderTopWidth: perfectSize(0.5),
           borderTopColor: 'rgba(255,255,255,0.1)',
         },
       }}>
@@ -52,11 +51,39 @@ export default function HomeStack() {
         })}
       />
       <Tab.Screen
+        name="Plan"
+        component={DashboardStack}
+        options={({route}) => ({
+          tabBarIcon: props => (
+            <TabIcon
+              source={images.homeTab}
+              name={strings.tabBarLabels.plan}
+              {...props}
+            />
+          ),
+          tabBarVisible: getTabBarVisibility(route),
+        })}
+      />
+      <Tab.Screen
         name="Add"
         component={TransactionStack}
         options={props => ({
           tabBarIcon: props => <Add {...props} />,
           tabBarVisible: false,
+        })}
+      />
+      <Tab.Screen
+        name="Goal"
+        component={DashboardStack}
+        options={({route}) => ({
+          tabBarIcon: props => (
+            <TabIcon
+              source={images.homeTab}
+              name={strings.tabBarLabels.goal}
+              {...props}
+            />
+          ),
+          tabBarVisible: getTabBarVisibility(route),
         })}
       />
       <Tab.Screen
