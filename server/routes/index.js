@@ -5,11 +5,12 @@ const transaction = require("../controllers/addTransaction");
 const fetchTransaction = require("../controllers/dashboard");
 const stat = require("../controllers/stat");
 const investments = require("../controllers/investments");
-
+const transactions = require("../controllers/transactionList");
 router.use("/register", register);
 router.use("/login", login);
 router.use("/transaction", transaction);
 router.use("/dashboard", fetchTransaction);
 router.use("/stat", stat);
 router.use("/investments", investments);
+router.use("/transactions/list", transactions);
 module.exports = router;
