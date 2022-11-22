@@ -54,6 +54,7 @@ router.post("/", authenticateToken, async (req, res) => {
               userId: id,
             },
             { type: "debit" },
+            { transactionCat: { $ne: "tax" } },
           ],
         },
       },
@@ -155,14 +156,38 @@ router.post("/", authenticateToken, async (req, res) => {
         },
       },
     ]);
-
+    let totalPF = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              userId: id,
+            },
+            { investmentType: "pf" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sum: {
+            $sum: "$amount",
+          },
+        },
+      },
+    ]);
+    totalIncome = totalIncome?.[0]?.sum - transactionsOverview[1].total;
+    totalExpense = totalExpense?.[0]?.sum;
     let response = {
       responseType: true,
       error: false,
-      totalIncome: totalIncome?.[0]?.sum || false,
-      totalExpense: totalExpense?.[0]?.sum || false,
+      totalIncome: totalIncome,
+      totalExpense: totalExpense || false,
       totalInvestment: totalInvestment?.[0]?.sum || false,
-      transactionCategories: transactionsOverview,
+      totalPF: totalPF?.[0]?.sum,
+      transactionCategories: transactionsOverview.sort(
+        (a, b) => b.total - a.total
+      ),
       recentTransactions: recentTransactions,
       stat: [
         {
@@ -181,9 +206,9 @@ router.post("/", authenticateToken, async (req, res) => {
           title: "Savings",
           total: parseFloat(
             (
-              (totalIncome?.[0]?.sum || 0) -
+              (totalIncome || 0) -
               (totalInvestment?.[0]?.sum || 0) -
-              (totalExpense?.[0]?.sum || 0)
+              (totalExpense || 0)
             ).toFixed(2)
           ),
         },
