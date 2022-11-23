@@ -5,6 +5,7 @@ const hasher = require("../utils/Hasher");
 const EMAIL =
   /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 router.post("/", async (req, res) => {
+  console.log("Yo");
   const { email, password } = req.body;
   if (!EMAIL.test(email) || password == "") {
     res.send({
@@ -30,7 +31,7 @@ router.post("/", async (req, res) => {
     {
       _id: user._id,
     },
-    process.env.TOKEN_SECRET
+    process.env.djfdskfdskf
   );
   if (hashedpassword !== user.password) {
     const response = {
