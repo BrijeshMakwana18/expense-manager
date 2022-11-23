@@ -19,6 +19,7 @@ router.post("/", authenticateToken, async (req, res) => {
     transactionCat: transactionCat,
     transactionDate: transactionDate,
     expenseType: expenseType,
+    type: type,
   };
 
   if (isUpdateTransaction) {
