@@ -13,6 +13,7 @@ export default images = {
   food: require('../assets/images/food.png'),
   recharge: require('../assets/images/cash.png'),
   transfer: require('../assets/images/transfer.png'),
+  tax: require('../assets/images/tax.png'),
   entertainment: require('../assets/images/entertainment.png'),
   fuel: require('../assets/images/fuel.png'),
   groceries: require('../assets/images/groceries.png'),
