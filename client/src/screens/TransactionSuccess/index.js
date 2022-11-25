@@ -7,8 +7,7 @@ import {Button} from '../../components';
 import {getDisplayDate} from '../../utils/globalMethods';
 export default function TransactionSuccess({navigation, route}) {
   const handleOnSubmit = () => {
-    DeviceEventEmitter.emit('HideTabBar', false);
-    navigation.navigate('Home');
+    navigation.pop(2);
   };
   let {
     successMessage,
