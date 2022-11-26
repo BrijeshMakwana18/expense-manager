@@ -41,6 +41,10 @@ const transactionSchema = new mongoose.Schema({
     required: false,
     type: String,
   },
+  incomeType: {
+    required: false,
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("Transaction", transactionSchema);
