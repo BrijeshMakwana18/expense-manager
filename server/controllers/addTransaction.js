@@ -10,6 +10,7 @@ router.post("/", authenticateToken, async (req, res) => {
     type,
     transactionDate,
     expenseType,
+    incomeType,
   } = req.body;
   const isUpdateTransaction = req?.body?.id ? true : false;
   const transactionId = req?.body?.id;
@@ -46,6 +47,7 @@ router.post("/", authenticateToken, async (req, res) => {
       type: type,
       transactionDate: transactionDate,
       expenseType: expenseType,
+      incomeType: incomeType,
     });
     await transaction.save((err, response) => {
       if (err) {
