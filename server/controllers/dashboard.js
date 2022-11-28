@@ -15,6 +15,7 @@ const transactionCategories = [
   "fuel",
   "travel",
   "loan",
+  "other",
 ];
 
 router.post("/", authenticateToken, async (req, res) => {
@@ -34,6 +35,7 @@ router.post("/", authenticateToken, async (req, res) => {
               userId: id,
             },
             { type: "credit" },
+            { incomeType: { $ne: "cashbackRewards" } },
           ],
         },
       },
@@ -67,6 +69,26 @@ router.post("/", authenticateToken, async (req, res) => {
         },
       },
     ]);
+    let totalTax = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              userId: id,
+            },
+            { transactionCat: "tax" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sum: {
+            $sum: "$amount",
+          },
+        },
+      },
+    ]);
     let totalInvestment = await Transaction.aggregate([
       {
         $match: {
@@ -87,7 +109,32 @@ router.post("/", authenticateToken, async (req, res) => {
         },
       },
     ]);
+    let totalCashbacks = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              userId: id,
+            },
+            { type: "credit" },
+            { incomeType: "cashbackRewards" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sum: {
+            $sum: "$amount",
+          },
+        },
+      },
+    ]);
     let transactionsOverview = [];
+    let investmentOverview = {
+      cat: "investment",
+      total: 0,
+    };
     for (let i = 0; i < transactionCategories.length; i++) {
       let temp = await Transaction.aggregate([
         {
@@ -109,10 +156,14 @@ router.post("/", authenticateToken, async (req, res) => {
           },
         },
       ]);
-      transactionsOverview.push({
-        cat: transactionCategories[i],
-        total: temp?.[0]?.sum || 0,
-      });
+      if (transactionCategories[i] === "investment") {
+        investmentOverview.total = temp?.[0]?.sum || 0;
+      } else {
+        transactionsOverview.push({
+          cat: transactionCategories[i],
+          total: temp?.[0]?.sum || 0,
+        });
+      }
     }
 
     let totalNeeds = await Transaction.aggregate([
@@ -176,15 +227,40 @@ router.post("/", authenticateToken, async (req, res) => {
         },
       },
     ]);
-    totalIncome = totalIncome?.[0]?.sum - transactionsOverview[1].total;
+    let totalUSInvestment = await Transaction.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              userId: id,
+            },
+            { investmentType: "us" },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          sum: {
+            $sum: "$amount",
+          },
+        },
+      },
+    ]);
+    totalIncome = totalIncome?.[0]?.sum - totalTax?.[0]?.sum;
     totalExpense = totalExpense?.[0]?.sum;
+    totalUSInvestment = totalUSInvestment?.[0]?.sum;
     let response = {
       responseType: true,
       error: false,
       totalIncome: totalIncome,
       totalExpense: totalExpense || false,
       totalInvestment: totalInvestment?.[0]?.sum || false,
+      totalCashbacks: totalCashbacks?.[0]?.sum || false,
       totalPF: totalPF?.[0]?.sum,
+      investmentOverview: investmentOverview,
+      totalUSInvestment: totalUSInvestment,
+      totalTax: totalTax?.[0]?.sum,
       transactionCategories: transactionsOverview.sort(
         (a, b) => b.total - a.total
       ),
