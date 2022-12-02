@@ -50,7 +50,7 @@ export default function HomeStack() {
           tabBarVisible: getTabBarVisibility(route),
         })}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Plan"
         component={DashboardStack}
         options={({route}) => ({
@@ -63,7 +63,7 @@ export default function HomeStack() {
           ),
           tabBarVisible: getTabBarVisibility(route),
         })}
-      />
+      /> */}
       <Tab.Screen
         name="Add"
         component={TransactionStack}
@@ -72,7 +72,7 @@ export default function HomeStack() {
           tabBarVisible: false,
         })}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Goal"
         component={DashboardStack}
         options={({route}) => ({
@@ -85,7 +85,7 @@ export default function HomeStack() {
           ),
           tabBarVisible: getTabBarVisibility(route),
         })}
-      />
+      /> */}
       <Tab.Screen
         name="Stat"
         component={Statistics}
