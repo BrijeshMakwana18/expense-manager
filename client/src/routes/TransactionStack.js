@@ -9,6 +9,7 @@ import {
   AddExpense,
   AddIncome,
   TransactionSuccess,
+  AddEndpoint,
 } from '../screens';
 import {removeListeners} from '../utils/globalMethods';
 const Stack = createStackNavigator();
@@ -33,7 +34,7 @@ export default class TransactionStack extends Component {
   }
 
   componentWillUnmount() {
-    removeListeners(this.listnersArray);
+    removeListeners(this.listenerArray);
   }
 
   render() {
@@ -58,6 +59,11 @@ export default class TransactionStack extends Component {
         <Stack.Screen
           name="AddExpense"
           component={AddExpense}
+          options={{header: () => null}}
+        />
+        <Stack.Screen
+          name="Endpoint"
+          component={AddEndpoint}
           options={{header: () => null}}
         />
         <Stack.Screen
