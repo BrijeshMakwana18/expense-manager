@@ -10,7 +10,7 @@ import {
   DeviceEventEmitter,
   TouchableOpacity,
   FlatList,
-  BackHandler
+  BackHandler,
 } from 'react-native';
 import {colors, perfectSize} from '../../theme';
 import {connect} from 'react-redux';
@@ -34,6 +34,10 @@ const data = [
     screenName: 'AddExpense',
     backgroundColor: colors.primaryAppColor,
   },
+  {
+    label: 'Endpoint',
+    screenName: 'Endpoint',
+  },
 ];
 class AddTransaction extends Component {
   constructor(props) {
@@ -42,13 +46,16 @@ class AddTransaction extends Component {
   }
 
   componentDidMount() {
-    this.hardwareBackHandler = BackHandler.addEventListener("hardwareBackPress",()=>{
-      this.onBackButtonTapped()
-    })
+    this.hardwareBackHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        this.onBackButtonTapped();
+      },
+    );
   }
 
-  componentWillUnmount(){
-    this.hardwareBackHandler.remove()
+  componentWillUnmount() {
+    this.hardwareBackHandler.remove();
   }
 
   onBackButtonTapped = () => {

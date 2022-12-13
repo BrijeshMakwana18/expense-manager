@@ -23,7 +23,7 @@ import {images, colors, fonts, perfectSize, strings} from '../../../theme';
 import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddExpense} from './actions';
-import {fetchDashboard} from '../../Home/actions';
+import {fetchDashboard, fetchTransactions} from '../../Home/actions';
 import {getDisplayDate} from '../../../utils/globalMethods';
 import {encrypt, decryptV1} from '../../../configs';
 //Categories data
@@ -41,8 +41,8 @@ const data = [
     tintColor: 'rgb(255,72,72)',
   },
   {
-    title: 'TRANSFER',
-    image: images.transfer,
+    title: 'TAX',
+    image: images.tax,
     backgroundColor: 'rgba(72,19,128,0.9)',
     tintColor: 'rgb(72,19,128)',
   },
@@ -382,7 +382,7 @@ class AddExpense extends Component {
 
     let updatedRedord = {
       userId: this.props.LoginReducer.user.id,
-      type: 'debit',
+      type: selectedCat.toLowerCase() === 'investment' ? 'investment' : 'debit',
       amount: parseFloat(amount),
       transactionDate: selectedDate,
       notes: encrypt(notes),
@@ -400,6 +400,11 @@ class AddExpense extends Component {
         console.log('Expense added', response);
         this.props.fetchDashboard({
           params,
+        });
+        this.props.fetchTransactions({
+          params: {
+            id: this.props.LoginReducer.user.id,
+          },
         });
         if (response.responseType) {
           this.props.navigation.navigate('TransactionSuccess', {
@@ -424,7 +429,7 @@ class AddExpense extends Component {
       this.state;
     const expense = {
       userId: this.props.LoginReducer.user.id,
-      type: 'debit',
+      type: selectedCat.toLowerCase() === 'investment' ? 'investment' : 'debit',
       amount: parseFloat(amount),
       transactionDate: selectedDate,
       notes: encrypt(notes),
@@ -447,6 +452,11 @@ class AddExpense extends Component {
         this.props.fetchDashboard({
           params: dashboardParams,
           token: this.props.LoginReducer.user.token,
+        });
+        this.props.fetchTransactions({
+          params: {
+            id: this.props.LoginReducer.user.id,
+          },
         });
         if (response.responseType) {
           this.props.navigation.navigate('TransactionSuccess', {
@@ -801,6 +811,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   handleAddExpense: handleAddExpense,
   fetchDashboard: fetchDashboard,
+  fetchTransactions: fetchTransactions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddExpense);

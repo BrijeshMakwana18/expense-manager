@@ -34,7 +34,7 @@ const store = createStore(
   applyMiddleware(
     sagaMiddleware,
     // redux logger
-    // require("redux-logger").createLogger()
+    // require('redux-logger').createLogger(),
   ),
 );
 

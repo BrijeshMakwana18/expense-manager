@@ -1,19 +1,30 @@
+import {store} from '../store';
+
+const BaseURL = `http://${store.getState().AppReducer.endpoint.ip}:${
+  store.getState().AppReducer.endpoint.port
+}/`;
+
 export function USER_SIGNUP() {
-  return 'https://coinsheet.herokuapp.com/api/v1/register';
+  return `${BaseURL}api/v1/register`;
 }
 export function USER_LOGIN() {
-  return 'https://coinsheet.herokuapp.com/api/v1/login';
+  return `${BaseURL}api/v1/login`;
 }
 export function ADD_TRANSACTION() {
-  return 'https://coinsheet.herokuapp.com/api/v1/transaction';
+  return `${BaseURL}api/v1/transaction`;
 }
 export function FETCH_DASHBOARD() {
-  return 'https://coinsheet.herokuapp.com/api/v1/dashboard';
+  return `${BaseURL}api/v1/dashboard`;
 }
+
+export function TRANSACTIONS_LIST() {
+  return `${BaseURL}api/v1/transactions/list`;
+}
+
 export function FETCH_STAT() {
-  return 'https://coinsheet.herokuapp.com/api/v1/stat';
+  return `${BaseURL}api/v1/stat`;
 }
 
 export function FETCH_INVESTMETNS() {
-  return 'https://coinsheet.herokuapp.com/api/v1/investments';
+  return `${BaseURL}api/v1/investments`;
 }

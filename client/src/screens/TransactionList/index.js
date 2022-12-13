@@ -20,14 +20,20 @@ class TransactionList extends Component {
       selectedFilter: 'debit',
       hasDebitTransactions: false,
       hasCreditTransactions: false,
+      hasInvestmentTransactions: false,
+      offset: 10,
     };
   }
 
   componentDidMount() {
     DeviceEventEmitter.emit('HideTabBar', true);
-    const {isFromExpenseCat} = this.props.route.params;
+    const {isFromExpenseCat, selectedExpenseCat} = this.props.route.params;
+    if (selectedExpenseCat === 'investment') {
+      this.setState({
+        selectedFilter: 'investment',
+      });
+    }
     let allTransactions = this.getListData();
-    console.log(allTransactions.length);
     if (!isFromExpenseCat && allTransactions) {
       for (let i = 0; i < allTransactions?.length; i++) {
         if (allTransactions[i].type === 'debit') {
@@ -45,13 +51,24 @@ class TransactionList extends Component {
           break;
         }
       }
+      for (let i = 0; i < allTransactions?.length; i++) {
+        if (allTransactions[i].type === 'investment') {
+          this.setState({
+            hasInvestmentTransactions: true,
+          });
+          break;
+        }
+      }
     }
   }
 
   renderAllTransactions = (item, index) => {
     const {type, transactionCat, transactionDate, amount, notes} = item;
-    const {selectedFilter} = this.state;
-    if (type === selectedFilter) {
+    const {selectedFilter, offset} = this.state;
+    if (
+      type === selectedFilter &&
+      (selectedFilter === 'debit' ? index <= offset : true)
+    ) {
       return (
         <TouchableOpacity
           onPress={() => {
@@ -64,24 +81,24 @@ class TransactionList extends Component {
             styles.transactionContainer,
             {
               backgroundColor:
-                type === 'debit'
-                  ? colors.secondaryBackgroundColor
-                  : colors.creditTransactionBackgroundColor,
+                type === 'credit'
+                  ? colors.creditTransactionBackgroundColor
+                  : colors.secondaryBackgroundColor,
             },
           ]}>
           <View style={styles.transactionImageContainer}>
             <Image
               source={
-                type === 'debit'
-                  ? images[transactionCat]
-                  : images.incomePlaceholder
+                item.type == 'credit'
+                  ? images.incomePlaceholder
+                  : images[item.transactionCat]
               }
               style={styles.transactionImage}
             />
           </View>
           <View style={styles.transactionDetailsContainer}>
             <Text numberOfLines={1} style={styles.transactionNotes}>
-              {decryptV1(notes)}
+              {typeof notes === 'object' ? decryptV1(notes) : notes}
             </Text>
             <Text style={styles.transactionDate}>
               {getDisplayDate(transactionDate)}
@@ -92,12 +109,12 @@ class TransactionList extends Component {
               styles.transactionAmount,
               {
                 color:
-                  type === 'debit'
-                    ? colors.titleColor
-                    : colors.creditTransactionAmountColor,
+                  type === 'credit'
+                    ? colors.creditTransactionAmountColor
+                    : colors.titleColor,
               },
             ]}>
-            {type === 'debit' ? '-' : '+'}
+            {type === 'credit' ? '+' : type === 'debit' ? '-' : ''}
             {amount}
           </Text>
         </TouchableOpacity>
@@ -132,24 +149,30 @@ class TransactionList extends Component {
 
   getListData = () => {
     const {isFromExpenseCat, selectedExpenseCat} = this.props.route.params;
-    const {dashboardData} = this.props.AppReducer;
+    const {dashboardData, transactions} = this.props.AppReducer;
+    let data = [];
     if (isFromExpenseCat) {
-      return dashboardData.transactionCategories
-        .find(element => element.cat === selectedExpenseCat)
-        .transactions.reverse();
+      data = transactions[selectedExpenseCat];
     } else {
-      return dashboardData.allTransactions;
+      data = transactions.all;
     }
+    return data;
   };
   getDasListVisibility = () => {
     const {isFromExpenseCat} = this.props.route.params;
     if (!isFromExpenseCat) {
-      const {selectedFilter, hasCreditTransactions, hasDebitTransactions} =
-        this.state;
+      const {
+        selectedFilter,
+        hasCreditTransactions,
+        hasDebitTransactions,
+        hasInvestmentTransactions,
+      } = this.state;
 
       if (selectedFilter === 'debit' && hasDebitTransactions) {
         return true;
       } else if (selectedFilter === 'credit' && hasCreditTransactions) {
+        return true;
+      } else if (selectedFilter === 'investment' && hasInvestmentTransactions) {
         return true;
       } else {
         return false;
@@ -159,14 +182,44 @@ class TransactionList extends Component {
     }
   };
 
+  loadMore = () => {
+    console.log('a');
+    this.setState({
+      offset: this.state.offset + 10,
+    });
+  };
+
+  renderFooter = () => {
+    if (this.state.selectedFilter === 'debit') {
+      return (
+        <TouchableOpacity
+          onPress={() => this.loadMore()}
+          style={[
+            styles.filterButtonContainer,
+            {
+              backgroundColor: colors.primaryAppColor,
+              width: '80%',
+              alignSelf: 'center',
+              marginTop: '4%',
+              marginBottom: 0,
+            },
+          ]}>
+          <Text style={styles.filterButtonTitle}>{'Load More'}</Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
   render() {
-    const {headerTitle, filterOne, filterTwo} = strings.allTransactions;
+    const {headerTitle, filterOne, filterTwo, filterThree} =
+      strings.allTransactions;
     const {isFromExpenseCat} = this.props.route.params;
     const {selectedFilter} = this.state;
     return (
       <View style={styles.container}>
         <PrimaryHeader
           onPress={() => {
+            console.log(this.state.offset);
             this.props.navigation.goBack();
             DeviceEventEmitter.emit('HideTabBar', false);
           }}
@@ -197,6 +250,19 @@ class TransactionList extends Component {
               <Text style={styles.filterButtonTitle}>{filterOne}</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              onPress={() => this.setState({selectedFilter: 'investment'})}
+              style={[
+                styles.filterButtonContainer,
+                {
+                  backgroundColor:
+                    selectedFilter === 'investment'
+                      ? colors.primaryAppColor
+                      : colors.secondaryBackgroundColor,
+                },
+              ]}>
+              <Text style={styles.filterButtonTitle}>{filterThree}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => this.setState({selectedFilter: 'credit'})}
               style={[
                 styles.filterButtonContainer,
@@ -220,6 +286,7 @@ class TransactionList extends Component {
               this.renderAllTransactions(item, index)
             }
             showsVerticalScrollIndicator={false}
+            ListFooterComponent={this.renderFooter()}
           />
         ) : (
           <NoDataFound selectedFilter={selectedFilter} />

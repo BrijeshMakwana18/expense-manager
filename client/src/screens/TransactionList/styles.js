@@ -17,7 +17,7 @@ export default styles = StyleSheet.create({
     fontSize: perfectSize(15),
   },
   filterContainer: {
-    width: '80%',
+    width: '100%',
     marginTop: perfectSize(23),
     justifyContent: 'space-between',
     marginBottom: '5%',
@@ -26,10 +26,10 @@ export default styles = StyleSheet.create({
   },
   filterButtonContainer: {
     height: perfectSize(40),
-    width: '45%',
+    width: '30%',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: perfectSize(10),
+    borderRadius: perfectSize(4),
   },
   filterButtonTitle: {
     fontSize: perfectSize(15),

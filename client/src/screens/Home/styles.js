@@ -84,12 +84,12 @@ export default styles = StyleSheet.create({
     fontSize: perfectSize(22),
   },
   dashboardImage: {
-    height: '90%',
+    height: '60%',
     width: '60%',
     position: 'absolute',
     resizeMode: 'contain',
     top: '5%',
-    right: '2%',
+    right: '5%',
   },
   topCatContainer: {
     marginTop: '7%',

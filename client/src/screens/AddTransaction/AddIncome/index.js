@@ -13,6 +13,7 @@ import {
   Modal,
   Animated,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 import {Button, ButtonWithImage, PrimaryHeader} from '../../../components';
 import {connect} from 'react-redux';
@@ -20,7 +21,7 @@ import {images, colors, fonts, perfectSize, strings} from '../../../theme';
 import CalendarPicker from 'react-native-calendar-picker';
 import styles from './styles';
 import {handleAddIncome} from './actions';
-import {fetchDashboard} from '../../Home/actions';
+import {fetchDashboard, fetchTransactions} from '../../Home/actions';
 //Months for date picker
 let months = [
   'January',
@@ -80,6 +81,7 @@ class AddIncome extends Component {
       modalDisplayDate: '',
       datePicker: false,
       modalDate: '',
+      selectedIncomeType: '',
     };
   }
 
@@ -199,8 +201,8 @@ class AddIncome extends Component {
   };
 
   isActive = () => {
-    const {amount} = this.state;
-    return amount.trim() == '' ? false : true;
+    const {amount, selectedIncomeType} = this.state;
+    return amount.trim() == '' && selectedIncomeType === '' ? false : true;
   };
 
   onDateChange = date => {
@@ -245,6 +247,7 @@ class AddIncome extends Component {
       amount: parseFloat(amount),
       transactionDate: modalDate,
       notes: notes,
+      incomeType: this.state.selectedIncomeType,
     };
     this.props.handleAddIncome({
       income: income,
@@ -264,6 +267,11 @@ class AddIncome extends Component {
           params: dashboardParams,
           token: this.props.LoginReducer.user.token,
         });
+        this.props.fetchTransactions({
+          params: {
+            id: this.props.LoginReducer.user.id,
+          },
+        });
         this.props.navigation.navigate('TransactionSuccess', {
           isFromIncome: true,
           amount: response.transaction.amount,
@@ -277,8 +285,18 @@ class AddIncome extends Component {
     });
   };
   render() {
-    const {headerTitle, amountPlaceholder, notesPlaceholder, buttonTitle} =
-      strings.addIncome;
+    const {
+      headerTitle,
+      amountPlaceholder,
+      notesPlaceholder,
+      buttonTitle,
+      salary,
+      freelance,
+      cashbackRewards,
+      investmentProfit,
+      incomeType,
+    } = strings.addIncome;
+    const {selectedIncomeType} = this.state;
     return (
       <>
         <StatusBar
@@ -357,6 +375,85 @@ class AddIncome extends Component {
                 multiline
                 numberOfLines={5}
               />
+            </Animated.View>
+            <Animated.View style={styles.incomeTypeContainer}>
+              <Text style={styles.incomeTypeLabel}>{incomeType}</Text>
+              <View style={styles.incomeTypeButtonsContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({
+                      selectedIncomeType: 'salary',
+                    })
+                  }
+                  style={[
+                    styles.incomeTypeButtonContainer,
+                    {
+                      backgroundColor:
+                        selectedIncomeType == 'salary'
+                          ? colors.primaryAppColor
+                          : colors.secondaryBackgroundColor,
+                    },
+                  ]}>
+                  <Text style={styles.incomeTypeButtonTitle}>{salary}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({
+                      selectedIncomeType: 'investmentProfit',
+                    })
+                  }
+                  style={[
+                    styles.incomeTypeButtonContainer,
+                    {
+                      backgroundColor:
+                        selectedIncomeType == 'investmentProfit'
+                          ? colors.primaryAppColor
+                          : colors.secondaryBackgroundColor,
+                    },
+                  ]}>
+                  <Text style={styles.incomeTypeButtonTitle}>
+                    {investmentProfit}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.incomeTypeButtonsContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({
+                      selectedIncomeType: 'freelance',
+                    })
+                  }
+                  style={[
+                    styles.incomeTypeButtonContainer,
+                    {
+                      backgroundColor:
+                        selectedIncomeType == 'freelance'
+                          ? colors.primaryAppColor
+                          : colors.secondaryBackgroundColor,
+                    },
+                  ]}>
+                  <Text style={styles.incomeTypeButtonTitle}>{freelance}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() =>
+                    this.setState({
+                      selectedIncomeType: 'cashbackRewards',
+                    })
+                  }
+                  style={[
+                    styles.incomeTypeButtonContainer,
+                    {
+                      backgroundColor:
+                        selectedIncomeType == 'cashbackRewards'
+                          ? colors.primaryAppColor
+                          : colors.secondaryBackgroundColor,
+                    },
+                  ]}>
+                  <Text style={styles.incomeTypeButtonTitle}>
+                    {cashbackRewards}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </Animated.View>
             <Button
               title={buttonTitle}
@@ -452,6 +549,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   handleAddIncome: handleAddIncome,
   fetchDashboard: fetchDashboard,
+  fetchTransactions: fetchTransactions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddIncome);

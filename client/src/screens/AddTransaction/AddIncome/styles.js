@@ -1,5 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {colors, fonts, perfectSize, width} from '../../../theme';
+import {height} from '../../../theme';
 
 // eslint-disable-next-line no-undef
 export default styles = StyleSheet.create({
@@ -158,5 +159,41 @@ export default styles = StyleSheet.create({
     bottom: perfectSize(-30),
     width: '50%',
     justifyContent: 'space-between',
+  },
+  incomeTypeContainer: {
+    flexDirection: 'column',
+    height: '5%',
+    width: '100%',
+    marginTop: height > 700 ? '8%' : '5%',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  incomeTypeButtonsContainer: {
+    width: '100%',
+    height: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: '4%',
+    justifyContent: 'space-between',
+  },
+  incomeTypeLabel: {
+    textAlign: 'center',
+    color: 'rgba(255,255,255,0.5)',
+    fontFamily: fonts.quicksandBold,
+    fontSize: perfectSize(18),
+  },
+  incomeTypeButtonContainer: {
+    height: '100%',
+    width: '48%',
+    // backgroundColor: colors.primaryCardBackgroundColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: perfectSize(10),
+  },
+  incomeTypeButtonTitle: {
+    fontSize: perfectSize(15),
+    color: colors.titleColor,
+    fontFamily: fonts.avenirHeavy,
+    fontWeight: 'bold',
   },
 });

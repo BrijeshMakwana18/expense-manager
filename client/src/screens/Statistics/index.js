@@ -27,8 +27,18 @@ class Statistics extends Component {
       this.props.AppReducer;
     let MF = investments.mutualFunds;
     let stocks = investments.stocks;
-    let totalInvestmentValue = dashboardData.totalInvestment;
+    let totalPF = dashboardData?.totalPF;
+    let totalInvestmentValue =
+      dashboardData.totalInvestment - totalPF - dashboardData.totalUSInvestment;
+
     let currentInvestmentValue = MF.totalMFValue + stocks.totalStocksValue;
+    console.log(
+      'Current',
+      MF.totalMFValue,
+      stocks.totalStocksValue,
+      currentInvestmentValue,
+      totalInvestmentValue,
+    );
     let PL = currentInvestmentValue - totalInvestmentValue;
     let PLPercentage = parseFloat((100 * PL) / totalInvestmentValue);
 
@@ -50,6 +60,7 @@ class Statistics extends Component {
       currentInvestmentValue: parseFloat(currentInvestmentValue).toFixed(2),
       PL: parseFloat(PL).toFixed(2),
       PLPercentage: PLPercentage.toFixed(2),
+      totalPF: totalPF,
     };
   }
 
@@ -129,8 +140,13 @@ class Statistics extends Component {
   render() {
     const {market} = this.state;
     const {investments, isInvestmentsLoading} = this.props.AppReducer;
-    const {totalInvestmentValue, currentInvestmentValue, PL, PLPercentage} =
-      this.getPortfolio();
+    const {
+      totalInvestmentValue,
+      currentInvestmentValue,
+      PL,
+      PLPercentage,
+      totalPF,
+    } = this.getPortfolio();
 
     return (
       <View style={styles.container}>
@@ -226,6 +242,20 @@ class Statistics extends Component {
                   </Text>
                 </View>
               </View>
+              {this.state.market === INDIA && (
+                <View
+                  style={{
+                    width: '100%',
+                    marginTop: '4%',
+                  }}>
+                  <View>
+                    <View>
+                      <Text style={styles.portfolioInvestTitle}>PF</Text>
+                      <Text style={styles.portfolioValue}>{totalPF}</Text>
+                    </View>
+                  </View>
+                </View>
+              )}
               <View
                 style={{
                   width: '100%',

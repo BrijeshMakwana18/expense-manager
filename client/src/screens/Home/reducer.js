@@ -4,6 +4,11 @@ const initialState = {
   dashboardData: {},
   investments: {},
   isInvestmentsLoading: true,
+  transactions: [],
+  endpoint: {
+    ip: 'localhost',
+    port: '8080',
+  },
 };
 
 const AppReducer = (state = initialState, action) => {
@@ -18,6 +23,16 @@ const AppReducer = (state = initialState, action) => {
       return {
         ...state,
         investments: action.payload,
+      };
+    case actionTypes.SET_ENDPOINT:
+      return {
+        ...state,
+        endpoint: action.payload.data,
+      };
+    case actionTypes.SET_TRANSACTIONS_DATA:
+      return {
+        ...state,
+        transactions: action.payload,
       };
     default:
       return state;

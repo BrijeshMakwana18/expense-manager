@@ -22,20 +22,20 @@ class AllExpenseCat extends Component {
     if (item.total > 0) {
       return (
         <TouchableOpacity
-          // onPress={() => {
-          //   this.props.navigation.navigate('TransactionList', {
-          //     selectedExpenseCat: cat,
-          //     isFromExpenseCat: true,
-          //     selectedFilter: selectedFilter,
-          //     dateRange:
-          //       selectedFilter === 'all'
-          //         ? false
-          //         : {
-          //             start: selectedStartDateTimeStamp,
-          //             end: selectedEndDateTimeStamp,
-          //           },
-          //   });
-          // }}
+          onPress={() => {
+            this.props.navigation.navigate('TransactionList', {
+              selectedExpenseCat: cat,
+              isFromExpenseCat: true,
+              selectedFilter: selectedFilter,
+              dateRange:
+                selectedFilter === 'all'
+                  ? false
+                  : {
+                      start: selectedStartDateTimeStamp,
+                      end: selectedEndDateTimeStamp,
+                    },
+            });
+          }}
           style={[
             styles.catContainer,
             {

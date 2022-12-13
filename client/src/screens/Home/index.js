@@ -11,10 +11,11 @@ import {
   Platform,
   Easing,
   FlatList,
+  DeviceEventEmitter,
 } from 'react-native';
 import {connect} from 'react-redux';
 import {logout} from '../Login/actions';
-import {fetchDashboard, fetchInvestments} from './actions';
+import {fetchDashboard, fetchInvestments, fetchTransactions} from './actions';
 import {
   DashboardSkeleton,
   ErrorSlider,
@@ -31,7 +32,8 @@ import {
   getCurrentTimestamps,
 } from '../../utils/globalMethods';
 import {encrypt, decryptV1} from '../../configs';
-const CircularChart = ({item, index}) => {
+const CircularChart = ({totalIncome, item, index}) => {
+  let percent = (item.total * 100) / totalIncome;
   return (
     <View
       style={[
@@ -44,7 +46,7 @@ const CircularChart = ({item, index}) => {
         },
       ]}>
       <CircularProgress
-        percent={item.percentage}
+        percent={percent.toFixed(2)}
         radius={perfectSize(50)}
         bgRingWidth={perfectSize(12)}
         progressRingWidth={perfectSize(10)}
@@ -75,17 +77,8 @@ const CircularChart = ({item, index}) => {
           marginTop: '5%',
           marginBottom: '10%',
         }}>
-        {parseFloat(item.total).toFixed(2)}
+        {item.total}
       </Text>
-      {/* <Text
-        style={{
-          fontSize: perfectSize(20),
-          fontFamily: fonts.avenirMedium,
-          color: colors.titleColor,
-          fontWeight: 'bold',
-        }}>
-        {`${item.numberOfTransactions} ${strings.statistics.transactions}`}
-      </Text> */}
     </View>
   );
 };
@@ -102,17 +95,21 @@ class Home extends Component {
       error: '',
     };
     this.errorModalTop = new Animated.Value(perfectSize(-500));
+    this.listenerArray = [];
   }
   componentDidMount() {
     this.fetchDashboard();
-    const params = {
+  }
+  fetchDashboard() {
+    const data = {
       id: this.props.LoginReducer.user.id,
     };
     this.props.fetchInvestments({
-      params,
+      params: data,
     });
-  }
-  fetchDashboard() {
+    this.props.fetchTransactions({
+      params: data,
+    });
     this.setState({
       isLoading: true,
     });
@@ -246,7 +243,7 @@ class Home extends Component {
       return (
         <TouchableOpacity
           onPress={() =>
-            item.type == 'debit' &&
+            item.type !== 'credit' &&
             this.props.navigation.navigate('AddExpense', {
               isEdit: true,
               item: item,
@@ -261,9 +258,9 @@ class Home extends Component {
           <View style={styles.recentTransactionsImageContainer}>
             <Image
               source={
-                item.type == 'debit'
-                  ? images[item.transactionCat]
-                  : images.incomePlaceholder
+                item.type == 'credit'
+                  ? images.incomePlaceholder
+                  : images[item.transactionCat]
               }
               style={styles.recentTransactionsImage}
             />
@@ -289,7 +286,7 @@ class Home extends Component {
                     : colors.creditTransactionAmountColor,
               },
             ]}>
-            {item.type == 'debit' ? '-' : '+'}
+            {item.type == 'credit' ? '+' : '-'}
             {item.amount}
           </Text>
         </TouchableOpacity>
@@ -337,6 +334,7 @@ class Home extends Component {
       myBalanceTitle,
       dashboardIncomeTitle,
       dashboardExpenseTitle,
+      dashboardCashbackTitle,
       topCatHeader,
       recentTransactionsHeader,
       dashboardInvestmentTitle,
@@ -351,13 +349,13 @@ class Home extends Component {
           backgroundColor={colors.primaryBackgroundColor}
           barStyle="light-content"
         />
-        {isLoading ? (
+        {isLoading && Object.keys(dashboardData).length === 0 ? (
           <DashboardSkeleton />
         ) : (
           <View style={styles.container}>
             <View style={styles.headerContainer}>
               <Text
-                onPress={() => encrypt('AaVvGg')}
+                onPress={() => this.fetchDashboard()}
                 style={styles.headerTitle}>
                 {`${title} ${user.username}`}
               </Text>
@@ -368,7 +366,8 @@ class Home extends Component {
               selectedEndDateTimeStamp={selectedEndDateTimeStamp}
               onPress={filterType => this.handleFilterPress(filterType)}
             />
-            {dashboardData.allTransactions.length == 0 ? (
+            {dashboardData?.totalIncome === 0 &&
+            dashboardData?.totalExpense === 0 ? (
               <NoDataFound selectedFilter={selectedFilter} />
             ) : (
               <ScrollView
@@ -404,6 +403,16 @@ class Home extends Component {
                         </Text>
                         <Text style={styles.dashboardExpenseStyle}>
                           {dashboardData.totalExpense}
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.expenseContainer}>
+                      <View>
+                        <Text style={styles.dashboardExpenseHeaderStyle}>
+                          {dashboardCashbackTitle}
+                        </Text>
+                        <Text style={styles.dashboardExpenseStyle}>
+                          {dashboardData.totalCashbacks}
                         </Text>
                       </View>
                     </View>
@@ -462,7 +471,7 @@ class Home extends Component {
                     </View>
                   </View>
                 ) : null}
-                {dashboardData.stat.stat && (
+                {dashboardData.stat && (
                   <View
                     style={{
                       marginTop: '5%',
@@ -475,11 +484,13 @@ class Home extends Component {
                         marginTop: '3.33%',
                       }}>
                       <CircularChart
-                        item={dashboardData.stat.stat[0]}
+                        totalIncome={dashboardData.totalIncome}
+                        item={dashboardData.stat[0]}
                         index={0}
                       />
                       <CircularChart
-                        item={dashboardData.stat.stat[1]}
+                        totalIncome={dashboardData.totalIncome}
+                        item={dashboardData.stat[1]}
                         index={1}
                       />
                     </View>
@@ -490,17 +501,19 @@ class Home extends Component {
                         marginTop: '3.33%',
                       }}>
                       <CircularChart
-                        item={dashboardData.stat.stat[2]}
+                        totalIncome={dashboardData.totalIncome}
+                        item={dashboardData.stat[2]}
                         index={2}
                       />
                       <CircularChart
-                        item={dashboardData.stat.stat[3]}
+                        totalIncome={dashboardData.totalIncome}
+                        item={dashboardData.stat[3]}
                         index={3}
                       />
                     </View>
                   </View>
                 )}
-                {dashboardData.allTransactions.length > 0 ? (
+                {dashboardData.recentTransactions.length > 0 ? (
                   <View style={styles.recentTransactionsListContainer}>
                     <View style={styles.catHeaderContainer}>
                       <Text style={styles.recentTransactionsHeader}>
@@ -524,16 +537,16 @@ class Home extends Component {
                       </TouchableOpacity>
                     </View>
                     {this.renderRecentTransactions(
-                      dashboardData.allTransactions[0],
+                      dashboardData.recentTransactions[0],
                     )}
                     {this.renderRecentTransactions(
-                      dashboardData.allTransactions[1],
+                      dashboardData.recentTransactions[1],
                     )}
                     {this.renderRecentTransactions(
-                      dashboardData.allTransactions[2],
+                      dashboardData.recentTransactions[2],
                     )}
                     {this.renderRecentTransactions(
-                      dashboardData.allTransactions[3],
+                      dashboardData.recentTransactions[3],
                     )}
                   </View>
                 ) : null}
@@ -569,6 +582,7 @@ const mapDispatchToProps = {
   logout: logout,
   fetchDashboard: fetchDashboard,
   fetchInvestments: fetchInvestments,
+  fetchTransactions: fetchTransactions,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
