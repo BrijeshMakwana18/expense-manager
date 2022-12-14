@@ -35,7 +35,7 @@ router.post("/", authenticateToken, async (req, res) => {
               userId: id,
             },
             { type: "credit" },
-            { incomeType: { $ne: "cashbackRewards" } },
+            // { incomeType: { $ne: "cashbackRewards" } },
           ],
         },
       },
