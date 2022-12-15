@@ -210,6 +210,28 @@ class TransactionList extends Component {
     }
   };
 
+  onPressInvestment = () => {
+    this.setState({selectedFilter: 'investment'});
+    this.flatListRef.scrollToOffset({
+      offset: 0,
+      animated: false,
+    });
+  };
+  onPressCredit = () => {
+    this.setState({selectedFilter: 'credit'});
+    this.flatListRef.scrollToOffset({
+      offset: 0,
+      animated: false,
+    });
+  };
+  onPressDebit = () => {
+    this.setState({selectedFilter: 'debit'});
+    this.flatListRef.scrollToOffset({
+      offset: 0,
+      animated: false,
+    });
+  };
+
   render() {
     const {headerTitle, filterOne, filterTwo, filterThree} =
       strings.allTransactions;
@@ -237,7 +259,7 @@ class TransactionList extends Component {
         {!isFromExpenseCat && (
           <View style={styles.filterContainer}>
             <TouchableOpacity
-              onPress={() => this.setState({selectedFilter: 'debit'})}
+              onPress={() => this.onPressDebit()}
               style={[
                 styles.filterButtonContainer,
                 {
@@ -250,7 +272,7 @@ class TransactionList extends Component {
               <Text style={styles.filterButtonTitle}>{filterOne}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => this.setState({selectedFilter: 'investment'})}
+              onPress={() => this.onPressInvestment()}
               style={[
                 styles.filterButtonContainer,
                 {
@@ -263,7 +285,7 @@ class TransactionList extends Component {
               <Text style={styles.filterButtonTitle}>{filterThree}</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => this.setState({selectedFilter: 'credit'})}
+              onPress={() => this.onPressCredit()}
               style={[
                 styles.filterButtonContainer,
                 {
@@ -279,6 +301,9 @@ class TransactionList extends Component {
         )}
         {this.getDasListVisibility() ? (
           <FlatList
+            ref={ref => {
+              this.flatListRef = ref;
+            }}
             data={this.getListData()}
             contentContainerStyle={styles.catListContainer}
             keyExtractor={(item, index) => index.toString()}
