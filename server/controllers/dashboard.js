@@ -35,7 +35,6 @@ router.post("/", authenticateToken, async (req, res) => {
               userId: id,
             },
             { type: "credit" },
-            // { incomeType: { $ne: "cashbackRewards" } },
           ],
         },
       },
@@ -253,6 +252,7 @@ router.post("/", authenticateToken, async (req, res) => {
     let response = {
       responseType: true,
       error: false,
+      balance: totalIncome - totalExpense - totalInvestment?.[0]?.sum,
       totalIncome: totalIncome,
       totalExpense: totalExpense || false,
       totalInvestment: totalInvestment?.[0]?.sum || false,
@@ -280,13 +280,11 @@ router.post("/", authenticateToken, async (req, res) => {
         },
         {
           title: "Savings",
-          total: parseFloat(
-            (
-              (totalIncome || 0) -
-              (totalInvestment?.[0]?.sum || 0) -
-              (totalExpense || 0)
-            ).toFixed(2)
-          ),
+          total:
+            
+                  parseFloat(totalIncome -
+                  totalInvestment?.[0]?.sum-
+                  totalExpense).toFixed(2)
         },
       ],
     };
